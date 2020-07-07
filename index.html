@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!--link rel="apple-touch-startup-image" href="/launch.png"-->
+<html>
+<head>
+  <!-- Google Tag Manager, except in iOS Apps -->
+  <script>
+  var gStandalone = window.navigator.standalone,
+      gUserAgent = window.navigator.userAgent.toLowerCase(),
+      gSafari = /safari/.test( gUserAgent ),
+      gIOS = /iphone|ipod|ipad/.test( gUserAgent );
+
+  if (!(gIOS && (!gStandalone && !gSafari))) {
+    console.log('start GTM');
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T94V7ZS');
+  } else {
+    console.log('skip GTM');
+  }
+
+  if (gIOS) {
+    document.ontouchmove = event => { event.preventDefault(); };
+  }
+  </script>
+  <!-- End Google Tag Manager -->
+
+    <!-- Social preview tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TBlocks">
+    <meta property="og:description" content="TBlocks a playful workspace for programming, driving and recording trashbots.">
+    <meta property="og:image" content="https://trashbots.github.io/tblocks/images/TBlocksLinkImage.jpg">
+    <meta property="og:url" content="https://trashbots.github.io/tblocks">
+    <meta name="author" content="Paul Austin">
+    <meta name="twitter:title" content="TBlocks ">
+    <meta name="twitter:description" content="TBlocks a playful workspace for programming, driving and recording trashbots.">
+    <meta name="twitter:image" content="https://trashbots.github.io/tblocks/images/TBlocksLinkImage.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <audio id='short-click' src='sounds/short-click.m4a'></audio>
+  <audio id='poof' src='sounds/poof.m4a'></audio>
+  <audio id='drop' src='sounds/drop.m4a'></audio>
+  <title>TBlocks</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="font-awesome/css/all.css">
+  <link rel="stylesheet" href="font-awesome/css/v4-shims.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T94V7ZS"
+    height='0px' width='0px' style='display:none;visibility:hidden'></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+  <div>
+    <svg id='editorSvgCanvas' xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+  <!-- Overlays such as the driver mode, file pick mode, settings get inserted here. -->
+  <div id='overlayLayer'>
+  </div>
+  <div>
+    <svg id='actionDotSvgCanvas' xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+  <div id='saveCamera' class='cameraIdle'></div>
+  <!-- forms dynamically inserted into this div -->
+  <div id='tbe-forms' style='height:0px;'></div>
+  <div id='cookieSheet'></dvi>
+</body>
+<script src='bundled_tbe.js'></script>
+</html>

@@ -1,0 +1,1268 @@
+/*
+Copyright (c) 2017 Paul Austin - SDG
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+#cookiesGlass {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 1, 0.2);
+  background-blend-mode: multiply;
+}
+#cookiesForm {
+  position: absolute;
+  top: 70%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 1, 0.7);
+  background-blend-mode: multiply;
+}
+#cookiesNote {
+  color: White;
+  font-size: 20px;
+  font-family: "Helvetica";
+  margin-right: 40px;
+  margin-left: 30px;
+  margin-top: 15px;
+}
+#cookiesButton {
+  height: 40px;
+  margin: 10px;
+  background-color: #44c767;
+  -moz-border-radius: 30px;
+  -webkit-border-radius: 30px;
+  border-radius: 30px;
+  border: 1px solid #18ab29;
+  display: inline-block;
+  padding: 5px;
+  color: #ffffff;
+  font-family: "Helvetica";
+  font-size: 17px;
+  text-decoration: none;
+}
+#cookiesButton:hover {
+  background-color: #5cbf2a;
+}
+#cookiesButton:active {
+  position: relative;
+  top: 1px;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.teak-log {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  font-size: 12px;
+  font-family: "Monaco";
+  width: 25%;
+  height: 100%;
+  float: right;
+  border: none;
+  outline: none;
+  overflow-y: scroll;
+  background-color: rgba(0, 0, 1, 0.05);
+  background-blend-mode: multiply;
+}
+.editor-background {
+  fill: #FFF8E1;
+}
+#snapShotCanvas {
+  position: fixed;
+  top: 5%;
+  left: 20%;
+  width: 80%;
+  height: 50%;
+  background-color: cyan;
+}
+#editorSvgCanvas {
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  -ms-touch-action: none;
+  touch-action: none;
+  /* prevent text from being selected browser style */
+  user-select: none;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+#actionDotSvgCanvas {
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background-color: none;
+  -ms-touch-action: none;
+  touch-action: none;
+  /* prevent text from being selected browser style */
+  user-select: none;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+.dropArea {
+  /* drop area will be moved to bottom, match width of screen */
+  stroke-width: 1;
+  font-family: "Helvetica";
+  font-size: 18px;
+}
+.area1 {
+  fill: #F5B041;
+}
+.area2 {
+  fill: #AE3415;
+}
+.area3 {
+  fill: #7B99AF;
+}
+.tab-block {
+  fill: #F5B041;
+  stroke: #1B5E20;
+  stroke-width: 2;
+  z-index: 500;
+}
+.tab-text {
+  width: 40px;
+  height: 25px;
+  font-size: 24px;
+  fill: black;
+  font-family: "Helvetica";
+  pointer-events: none;
+  z-index: 501;
+}
+@keyframes selectionFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.selection-rect {
+  fill: #B3E5FC;
+  stroke-width: 4;
+  stroke: #1E88E5;
+  animation: selectionFadeIn 0.3s ease;
+}
+/* Controller settings for the block. */
+#block-settings-custom {
+  /* All editors should be the same height */
+  height: 190px;
+}
+.editorDiv {
+  text-align: center;
+}
+/* Block controllers is a row of tab-like buttons on the edge of the config panel */
+.block-settings-tab {
+  text-align: center;
+  font-size: 24px;
+  height: 36px;
+  margin: 5px 0px 0px 0px;
+  border: 0px solid #81C784;
+  background-color: #81C784;
+  user-select: none;
+  outline: none;
+}
+.tab-selected {
+  background-color: #C8E6C9;
+  border: 0px solid #C8E6C9;
+}
+/* Use this class for SVG elements that do not directly interact with the pointer */
+.svg-clear {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  /* Chrome/Safari */
+}
+body {
+  margin: 0;
+}
+.palette-button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 15px;
+  width: 82px;
+  height: 82px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 10px;
+  margin: 4px 2px;
+  outline: none;
+}
+.palette-button:active {
+  background-color: #1E8449;
+}
+/* teak form is for system wide dialogs that slide in from the top */
+.pulldown {
+  width: 14em;
+  transition: transform 0.4s ease;
+}
+.pulldown.opened {
+  width: 14em;
+  transform: translate(0, 0%);
+}
+.pulldown.closed {
+  transform: translate(0, -120%);
+}
+.teakform {
+  /* setting dialogs */
+  background-color: #75DCE7;
+  border-radius: 10px;
+  box-sizing: border-box;
+  box-shadow: 1px 4px 5px 2px rgba(0, 0, 0, 0.2);
+  font-family: "Helvetica";
+  color: #33691E;
+  font-size: 20px;
+  padding: 20px;
+  touch-action: none;
+  /* prevents any screen bounce on android */
+}
+.teakform button {
+  border: 2px solid #06a3e9;
+  border-radius: 4px;
+  background-color: #75DCE7;
+  user-select: none;
+}
+.teakform button:active {
+  outline: none;
+}
+.calcButtons {
+  fill: #81C784;
+  stroke: #1B5E20;
+  stroke-width: 2;
+}
+.beatsButtons {
+  fill: #81C784;
+  stroke: #1B5E20;
+  stroke-width: 2;
+}
+/* actton dot are 'bottons' along the top of the canvas */
+.action-dot-bg {
+  transition: fill 0.2s ease;
+  fill: #B2EBF2;
+}
+.action-dot-dropdown-bg {
+  transition: fill 0.2s ease;
+  fill: #80DEEA;
+}
+.action-dot-bg.overlay-showing {
+  fill: #00BCD4;
+  stroke: #8E44AD;
+  stroke-width: 5;
+}
+.action-dot-bg.running {
+  fill: #00BCD4;
+  stroke: #8E44AD;
+  stroke-width: 5;
+}
+.action-dot-fatext.running {
+  fill: #33FF66;
+}
+.action-dot-bg.action-dot-active {
+  fill: #00BCD4;
+  stroke: #3498DB;
+  stroke-width: 5;
+}
+.action-dot.action-dot-active-text {
+  stroke: #3498DB;
+}
+.action-dot-fatext {
+  fill: #388e3c;
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  font-weight: 900;
+  text-anchor: middle;
+  pointer-events: none;
+}
+.action-dot-doc-label {
+  fill: #B2EBF2;
+  font-family: "Helvetica";
+  font-size: 24px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+.error {
+  color: red;
+}
+.numeric-display {
+  width: 230px;
+  height: 30px;
+  border-radius: 8px;
+  background-color: #c4c4c4;
+  font-size: 24px;
+  pointer-events: auto;
+}
+.numeric-display-half {
+  display: inline-block;
+  float: left;
+  width: 110px;
+  height: 30px;
+  border-radius: 8px;
+  background-color: #c4c4c4;
+  font-size: 24px;
+  pointer-events: auto;
+}
+.numeric-display-third {
+  display: inline-block;
+  float: right;
+  margin-right: 5px;
+  width: 75px;
+  height: 30px;
+  border-radius: 8px;
+  background-color: #c4c4c4;
+  font-size: 24px;
+  pointer-events: auto;
+}
+.beats-display {
+  display: inline-block;
+  float: left;
+  margin-left: 10px;
+  width: 110px;
+  height: 30px;
+  border-radius: 8px;
+  background-color: #c4c4c4;
+  font-size: 24px;
+  pointer-events: auto;
+}
+.selectedDisplay {
+  background-color: #ffc570;
+}
+.area {
+  margin-top: 5px;
+}
+#overlayFrame {
+  position: absolute;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.commented {
+  fill: #fff;
+}
+.text-buttons {
+  font-family: "Helvetica";
+}
+.hiddenPaletteBlock {
+  display: none;
+}
+* {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-callout: none;
+  -webkit-touch-callout: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -ms-user-select: none;
+}
+/*
+Copyright (c) 2017 Paul Austin - SDG
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+.width-third {
+  width: 31.6%;
+}
+.width-half {
+  width: 50%;
+}
+.width-twothirds {
+  width: 66.6%;
+}
+.width-whole {
+  width: 100%;
+}
+/* Buttons for the bock config edit operations run, copy, delete */
+.group-div {
+  padding: 5px;
+}
+button {
+  touch-action: none;
+  /* prevents any screen bounce on android */
+}
+textarea {
+  touch-action: none;
+  /* prevents any screen bounce on android */
+}
+button {
+  font-size: 20px;
+  border: 2px solid #81C784;
+  border-radius: 30px;
+  background-color: #81C784;
+  user-select: none;
+  outline: none;
+  padding: 1px;
+  height: 40px;
+}
+button:active {
+  background-color: #4CAF50;
+}
+label input {
+  margin: 15;
+  /* prevent selecting text in control captions */
+  -webkit-user-select: none;
+  user-select: none;
+}
+label input[type="checkbox"] {
+  display: none;
+}
+label input[type="checkbox"] + .label-text:before {
+  content: "\f096";
+  font-family: "Font Awesome 5 Free";
+  speak: none;
+  font-size: 25px;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  width: 1em;
+  display: inline-block;
+  margin-right: 5px;
+  animation: toUnchecked 200ms ease-in;
+}
+label input[type="checkbox"]:checked + .label-text:before {
+  content: "\f046";
+  color: #06a3e9;
+  animation: toChecked 200ms ease-in;
+}
+label input[type="checkbox"]:disabled + .label-text {
+  color: #aaa;
+}
+label input[type="checkbox"]:disabled + .label-text:before {
+  content: "f096";
+  /* square-o */
+  color: #ccc;
+}
+@keyframes toUnchecked {
+  0% {
+    transform: scale(0.9);
+  }
+  60% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes toChecked {
+  0% {
+    transform: scale(0.9);
+  }
+  60% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+/*
+Copyright (c) 2019 Trashbots - SDG
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+.function-text {
+  width: 80px;
+  height: 80px;
+  font-size: 22px;
+  font-weight: bold;
+  fill: #D6E2FE;
+  font-family: "Helvetica";
+  pointer-events: none;
+  stroke-width: 0;
+}
+@keyframes shadowFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.4;
+  }
+}
+@keyframes outShadowFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.15;
+  }
+}
+.shadow-block {
+  opacity: 0.4;
+  fill: #43A047;
+  animation: shadowFadeIn 0.35s ease;
+}
+.shadow-block-outsnap {
+  opacity: 0.15;
+  fill: #43A047;
+  animation: outShadowFadeIn 0.35s ease;
+}
+@keyframes shadowFadeOut {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes outShadowFadeOut {
+  from {
+    opacity: 0.15;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.shadow-block-leave {
+  opacity: 0;
+  fill: #43A047;
+  animation: shadowFadeOut 0.35s ease;
+}
+.shadow-block-leave-outsnap {
+  opacity: 0;
+  fill: #43A047;
+  animation: outShadowFadeOut 0.35s ease;
+}
+/*
+.function-block-dragging {
+  fill: #795548;
+  stroke-width: 4;
+  stroke: #4E342E;
+}
+*/
+.function-block {
+  fill: #BA4A00;
+  stroke: #873600;
+  stroke-width: 4;
+  transition: stroke 0.4s ease;
+  stroke-linejoin: round;
+}
+.identity-block {
+  fill: #492f27;
+}
+.selected-block {
+  transition: stroke 0.4s ease;
+  stroke-width: 4;
+  stroke: #29B6F6;
+}
+.running-block {
+  stroke-width: 4;
+  stroke: #33FF66;
+}
+.flow-path {
+  fill: none;
+  stroke-width: 4;
+  stroke: #873600;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.block-stencil {
+  fill: none;
+  stroke-width: 2.5;
+  stroke: #FFB74D;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.block-stencil-fill {
+  stroke-width: 2;
+  stroke: #FFB74D;
+  fill: #FFB74D;
+  stroke-linejoin: round;
+}
+.block-stencil-fill-back {
+  fill: #81C784;
+  opacity: 0.5;
+  stroke-linejoin: round;
+}
+.block-sensor-stencil {
+  fill: none;
+  stroke-width: 1.5;
+  stroke: #FFB74D;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.block-sensor-stencil-value {
+  fill: #33FF33;
+  stroke-width: 0;
+  stroke: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.block-identity-text {
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  text-align: center;
+  font-size: 40px;
+  fill: #FFB74D;
+}
+.block-temperature-text {
+  font-size: 60px;
+}
+.dropdown-comparison {
+  background-color: #C8E6C9;
+  border-color: #81C784;
+  border-width: 2px;
+  float: left;
+  width: 65px;
+  height: 30px;
+  font-family: "Helvetica";
+  font-size: 22px;
+  text-align-last: center;
+  margin-left: 20px;
+  text-align: center;
+}
+.calc-shell {
+  stroke-width: 4;
+  stroke: #873600;
+  fill: #BA4A00;
+  stroke-linejoin: round;
+}
+.calc-keybase {
+  stroke-width: 4;
+  stroke: #873600;
+  fill: #873600;
+  stroke-linejoin: round;
+}
+.calc-vars {
+  stroke-width: 2;
+  fill: #42A5F5;
+  stroke: #4527A0;
+  stroke-linejoin: round;
+}
+.calc-vars-text {
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  text-align: center;
+  font-size: 30px;
+  fill: #FFFFFF;
+}
+.calc-operand {
+  stroke-width: 2;
+  stroke: #873600;
+  fill: #BA4A00;
+}
+.calc-operand-text {
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  text-align: center;
+  font-size: 30px;
+  fill: #FFB74D;
+}
+.calc-numbers {
+  stroke-width: 2;
+  stroke: #873600;
+  fill: #000000;
+}
+.calc-numbers-text {
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  text-align: center;
+  font-size: 30px;
+  fill: #FFB74D;
+}
+.vars-dropdown-comparison {
+  margin-left: 5px;
+  width: 75px;
+}
+.vars-poly-text {
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  text-align: center;
+  font-size: 30px;
+  fill: #FFFFFF;
+}
+.vars-poly {
+  stroke-width: 4;
+  fill: #42A5F5;
+  stroke: #4527A0;
+  stroke-linejoin: round;
+}
+.vars-bottom-txt {
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  font-size: 20px;
+  fill: #FFB74D;
+  stroke-width: 0;
+}
+.expr-region {
+  stroke-width: 1;
+  stroke: #FFB74D;
+  fill: #BA4A00;
+}
+.dropdown-label-txt {
+  float: left;
+  padding-left: 20px;
+  padding-top: 5px;
+}
+.idButton-comparison-label {
+  padding-left: 40px;
+}
+.idButton-comparison {
+  width: 85px;
+}
+.block-idButton-back {
+  fill: #777777;
+}
+.block-idButton-screw {
+  fill: #555555;
+}
+.block-idButton-button {
+  fill: #FF0040;
+}
+.block-idButton-label {
+  font-size: 15px;
+  font-family: "Helvetica";
+}
+.printBlock-buttons {
+  float: left;
+  display: inline-block;
+  background-color: #81C784;
+  margin-left: 10px;
+  margin-top: 20px;
+  height: 70px;
+  width: 220px;
+  border-radius: 10px;
+}
+.printBlock-option {
+  display: inline-block;
+  float: left;
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  border: solid #000;
+  border-width: 3px;
+  border-radius: 10px;
+  margin: 10px 9.5px;
+  width: 85px;
+  height: 45px;
+  background-color: #FFF8E1;
+  font-size: 25px;
+}
+.data-option {
+  display: inline-block;
+  font-size: 40px;
+  padding-top: 4px;
+  padding-left: 2px;
+}
+.printBlock-icon {
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  text-align: center;
+  font-size: 65px;
+  fill: #FFB74D;
+}
+.printBlock-text {
+  font-family: "Helvetica";
+  text-align: center;
+  font-size: 15px;
+  fill: #BA4A00;
+}
+.printBlock-selected {
+  background-color: #4CAF50;
+}
+.printBlock-dropdown {
+  border-width: 6px;
+  float: left;
+  width: 220px;
+  height: 70px;
+  font-family: "Helvetica";
+  font-size: 25px;
+  text-align-last: center;
+  margin-left: 10px;
+  margin-top: 15px;
+  text-align: center;
+}
+.varAdd-label-txt {
+  padding-left: 30px;
+  font-family: "Font Awesome 5 Free";
+  font-size: 30px;
+  padding-top: 0px;
+}
+.varSet-label-txt {
+  padding-left: 30px;
+  font-weight: bold;
+  font-size: 40px;
+  padding-top: 0px;
+  margin-top: -10px;
+}
+.block-picture-board {
+  fill: #000000;
+}
+.block-picture-led-off {
+  fill: #332222;
+}
+.block-picture-led-on {
+  fill: #FF4040;
+}
+.block-bot-connection-error {
+  fill: #FF5722;
+}
+.block-micro-servo-body {
+  stroke: #303F9F;
+  fill: #0033FF;
+  stroke-width: 2;
+}
+.block-motor-body {
+  fill: #777777;
+  stroke: #FFB74D;
+  stroke-width: 2;
+  stroke-dasharray: 4, 5;
+}
+.block-motor-shaft {
+  fill: #202020;
+}
+.block-config-form {
+  /* setting dialogs */
+  background-color: #C8E6C9;
+  border-radius: 10px;
+  box-sizing: border-box;
+  box-shadow: 1px 4px 5px 2px rgba(0, 0, 0, 0.2);
+  font-family: "Helvetica";
+  font-size: 20px;
+  touch-action: none;
+  /* prevents any screen bounce on android */
+}
+.block-sound-piano-w {
+  fill: #FFFDE7;
+}
+.block-sound-piano-w-pressed {
+  fill: #FFE082;
+}
+.block-sound-piano-b {
+  fill: #212121;
+}
+.block-sound-piano-b-pressed {
+  fill: #616161;
+}
+.block-sound-piano {
+  fill: #3E2723;
+  stroke: #3E2723;
+  stroke-width: 2px;
+}
+.block-sound-txtBox {
+  fill: #81C784;
+  stroke: #81C784;
+  stroke-width: 2px;
+}
+.block-motor-text {
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  font-size: 12px;
+  stroke-width: 0;
+}
+.block-motor-text-duration {
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  font-size: 20px;
+  stroke-width: 0;
+}
+.block-motor-text-type {
+  font-family: "Helvetica";
+  font-size: 11px;
+  stroke: #000;
+  fill: #000;
+  stroke-width: 1px;
+}
+.block-wait-text {
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  font-size: 20px;
+  stroke-width: 0;
+}
+.block-twomotor-text {
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  font-size: 14px;
+  stroke-width: 0;
+}
+.block-servo-text {
+  font-family: "Helvetica";
+  font-size: 20px;
+  stroke-width: 0;
+}
+.block-flowhead-loop {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 30px;
+  fill: #FFB74D;
+}
+.block-flowhead-count {
+  font-family: "Helvetica";
+  font-size: 20px;
+  stroke-width: 0;
+}
+/*
+Copyright (c) 2019 Trashbots - SDG
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+.fullScreenSlideIn {
+  top: 0%;
+  animation: fullScreenSlideIn 0.5s ease-out;
+}
+.fullScreenSlideOut {
+  top: 100%;
+  animation: fullScreenSlideOut 0.5s ease-in;
+}
+@keyframes fullScreenSlideIn {
+  from {
+    top: 100%;
+  }
+  to {
+    top: 0%;
+  }
+}
+@keyframes fullScreenSlideOut {
+  from {
+    top: 0%;
+  }
+  to {
+    top: 100%;
+  }
+}
+#overlayShell {
+  position: absolute;
+  width: 100%;
+  top: 0px;
+  bottom: 100%;
+  height: 100%;
+}
+#overlayRoot {
+  position: absolute;
+  width: 100%;
+  bottom: 100%;
+}
+#saveCamera {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.cameraIdle {
+  background-color: rgba(0, 0, 0, 0);
+}
+.cameraFlash {
+  background-color: rgba(0, 0, 0, 0);
+  animation: cameraFlash 0.7s ease;
+}
+@keyframes cameraFlash {
+  0% {
+    background-color: rgba(255, 255, 255, 0);
+  }
+  25% {
+    background-color: rgba(255, 255, 255, 0);
+  }
+  35% {
+    background-color: rgba(240, 240, 255, 0.9);
+  }
+  40% {
+    background-color: rgba(240, 240, 255, 0.9);
+  }
+  100% {
+    background-color: rgba(255, 255, 255, 0);
+  }
+}
+#splashOverlay {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(225, 245, 254, 0.8);
+  -ms-touch-action: none;
+  touch-action: none;
+  /* prevent text from being selected browser style */
+  user-select: none;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+#splashDialog {
+  position: absolute;
+  left: 10%;
+  top: 4%;
+  width: 75%;
+  padding: 10px;
+  padding-left: 20px;
+  padding-top: 20px;
+  background-color: #F7F7FF;
+  border-radius: 12px;
+  border: 10px solid #4FC3F7;
+  overflow: hidden;
+}
+.splash-title {
+  margin-top: 0px;
+  margin-bottom: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: "Helvetica";
+}
+.splash-body {
+  margin: 0px;
+  font-family: "Helvetica";
+}
+.splash-button {
+  width: 200px;
+  border: 2px solid #4FC3F7;
+  background-color: #4FC3F7;
+}
+.splash-button:active {
+  border: 2px solid #039BE5;
+  background-color: #039BE5;
+}
+/*
+Copyright (c) 2019 Trashbots - SDG
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+#dsoOverlay {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  background-color: lightgreen;
+}
+.dso-list-box-shell {
+  border-radius: 10px;
+  border: 5px solid #81C784;
+  background-color: #D8F6D9;
+}
+.dso-svg-backgound {
+  fill: transparent;
+}
+.dso-list-box {
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+  height: 100%;
+}
+.dso-button {
+  margin-top: 5px;
+  height: 60px;
+  width: 49%;
+  border-radius: 10px;
+  display: inline-block;
+  fill: #B2EBF2;
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  font-weight: 900;
+  font-size: 24px;
+  text-anchor: middle;
+}
+.dso-button:disabled {
+  opacity: 0.6;
+}
+.tbot-device {
+  fill: #11DD33;
+  stroke: #11DD33;
+  stroke-width: 2px;
+}
+.tbot-device-head {
+  fill: #00CC22;
+  stroke: #00CC22;
+  stroke-width: 2px;
+}
+.tbot-device-side {
+  fill: #039BE5;
+  stroke: #039BE5;
+  stroke-width: 2px;
+}
+.tbot-device-name {
+  font-family: "Font Awesome 5 Free", "Helvetica";
+  text-anchor: middle;
+  font-size: 25px;
+  fill: #333300;
+}
+.tbot-select {
+  stroke: #039BE5;
+  stroke-width: 4px;
+  fill: #B3E5FC;
+  stroke-linecap: round;
+  stroke-dasharray: 4,9;
+}
+/*
+Copyright (c) 2019 Trashbots - SDG
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+#driveOverlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: lightgreen;
+  -ms-touch-action: none;
+  touch-action: none;
+  /* prevent text from being selected browser style */
+  user-select: none;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+.slider-groove {
+  fill: #4A148C;
+  stroke: #2e7d32;
+  stroke-width: 10px;
+}
+.slider-thumb {
+  fill: #CE93D8;
+  stroke: #BA68C8;
+  stroke-width: 10px;
+}
+.slider-text {
+  fill: #3949AB;
+  font-family: "Helvetica";
+  text-anchor: middle;
+  alignment-baseline: middle;
+  pointer-events: none;
+}
+.drive-diagnostics {
+  position: absolute;
+  font-family: "Helvetica";
+  left: calc(50% - 150px);
+  top: 200px;
+}
+/*
+Copyright (c) 2019 Trashbots - SDG
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+#debugOverlay {
+  width: 100%;
+  height: 100%;
+  background-color: #4F5659;
+}
+#debugLogBackground {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  bottom: 10px;
+  right: 10px;
+  background-color: #003300;
+  border-radius: 10px;
+}
+#debugLog {
+  font-family: "courier new";
+  font-size: 16px;
+  height: 100%;
+  width: calc(100% - 18px);
+  color: #00FF12;
+  position: relative;
+  top: 10px;
+  left: 15px;
+  overflow: auto;
+  white-space: pre;
+}
