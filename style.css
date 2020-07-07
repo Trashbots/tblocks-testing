@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2017 Paul Austin - SDG
+Copyright (c) 2020 Trashbots - SDG
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -390,7 +390,7 @@ body {
   -ms-user-select: none;
 }
 /*
-Copyright (c) 2017 Paul Austin - SDG
+Copyright (c) 2020 Trashbots - SDG
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -504,7 +504,7 @@ label input[type="checkbox"]:disabled + .label-text:before {
   }
 }
 /*
-Copyright (c) 2019 Trashbots - SDG
+Copyright (c) 2020 Trashbots - SDG
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -942,7 +942,7 @@ SOFTWARE.
   stroke-width: 0;
 }
 /*
-Copyright (c) 2019 Trashbots - SDG
+Copyright (c) 2020 Trashbots - SDG
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -1077,7 +1077,7 @@ SOFTWARE.
   background-color: #039BE5;
 }
 /*
-Copyright (c) 2019 Trashbots - SDG
+Copyright (c) 2020 Trashbots - SDG
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -1162,7 +1162,7 @@ SOFTWARE.
   stroke-dasharray: 4,9;
 }
 /*
-Copyright (c) 2019 Trashbots - SDG
+Copyright (c) 2020 Trashbots - SDG
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -1220,7 +1220,7 @@ SOFTWARE.
   top: 200px;
 }
 /*
-Copyright (c) 2019 Trashbots - SDG
+Copyright (c) 2020 Trashbots - SDG
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -1265,4 +1265,50 @@ SOFTWARE.
   left: 15px;
   overflow: auto;
   white-space: pre;
+}
+#calibrationOverlay {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(225, 245, 254, 0.8);
+  -ms-touch-action: none;
+  touch-action: none;
+  /* prevent text from being selected browser style */
+  user-select: none;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+#calibrationDialog {
+  position: absolute;
+  left: 10%;
+  top: 4%;
+  width: 75%;
+  padding: 10px;
+  padding-left: 20px;
+  padding-top: 20px;
+  background-color: #F7F7FF;
+  border-radius: 12px;
+  border: 10px solid #4FC3F7;
+  overflow: hidden;
+}
+.calibration-title {
+  margin-top: 0px;
+  margin-bottom: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: "Helvetica";
+}
+.calibration-body {
+  margin: 0px;
+  font-family: "Helvetica";
+}
+.calibration-button {
+  width: 200px;
+  border: 2px solid #4FC3F7;
+  background-color: #4FC3F7;
+}
+.calibration-button:active {
+  border: 2px solid #039BE5;
+  background-color: #039BE5;
 }
