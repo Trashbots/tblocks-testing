@@ -7320,263 +7320,289 @@ SOFTWARE.
 */
 
 module.exports = function () {
-  var log = require('log.js');
-  var fastr = require('fastr.js');
 
-  // Starts as an object and will be mosty empty until start()
-  // is called.
-  var app = {};
-  app.buildFlags = require('../buildFlags.js');
+	//const oldAlert = window.alert
+	/*
+ window.alert = function () {}
+ window.onload = function() {
+ 	const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+ 	if (isMobile)
+ 	{
+ 		window.location.href = "tblocks://"
+ 		setTimeout(() => {window.location.href = "http://tblocks.app.link"}, 1000)		
+ 	}
+ 	else
+ 	{
+ 		window.location.href = "https://trashbots.github.io/tblocks"
+ 	}
+ }
+ */
+	//window.alert = oldAlert
 
-  var timeFormat = {
-    year: "2-digit",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
-  };
 
-  log.trace('TBlocks starting -', new Date().toLocaleDateString("en-US", timeFormat));
+	var log = require('log.js');
+	var fastr = require('fastr.js');
 
-  app.hideCookieSheet = function () {
-    var cookieSheet = document.getElementById('cookieSheet');
-    cookieSheet.innerHTML = '';
-    app.storage.setItem('cookiesAccepted', true);
-  };
+	// Starts as an object and will be mosty empty until start()
+	// is called.
+	var app = {};
+	app.buildFlags = require('../buildFlags.js');
 
-  app.pause = function () {
-    log.trace('TBlocks pause.', new Date().toLocaleDateString("en-US", timeFormat));
-    app.overlays.pauseResume(true);
-  };
+	var timeFormat = {
+		year: "2-digit",
+		month: "2-digit",
+		day: "2-digit",
+		hour: "2-digit",
+		minute: "2-digit",
+		second: "2-digit"
+	};
 
-  app.resume = function () {
-    log.trace('TBlocks resuming.', new Date().toLocaleDateString("en-US", timeFormat));
-    app.overlays.pauseResume(false);
-  };
+	log.trace('TBlocks starting -', new Date().toLocaleDateString("en-US", timeFormat));
 
-  // Application main, called once shell is fully up.
-  app.start = function () {
-    if (window.cordova !== undefined) {
-      app.platformId = window.cordova.platformId;
-    } else {
-      app.platformId = "broswer";
-    }
+	app.hideCookieSheet = function () {
+		var cookieSheet = document.getElementById('cookieSheet');
+		cookieSheet.innerHTML = '';
+		app.storage.setItem('cookiesAccepted', true);
+	};
 
-    var isApp = app.isCordovaApp;
-    var w = window.innerWidth;
-    var h = window.innerHeight;
-    var luanchMessage = 'verson:' + app.buildFlags.version + ', isApp:' + app.isCordovaApp + ', platform:' + app.platformId + ', screen:(' + w + ', ' + h + ')';
-    log.trace(luanchMessage);
+	app.pause = function () {
+		log.trace('TBlocks pause.', new Date().toLocaleDateString("en-US", timeFormat));
+		app.overlays.pauseResume(true);
+	};
 
-    // Once app has started these can be added.
-    document.addEventListener("pause", app.pause, false);
-    document.addEventListener("resume", app.resume, false);
+	app.resume = function () {
+		log.trace('TBlocks resuming.', new Date().toLocaleDateString("en-US", timeFormat));
+		app.overlays.pauseResume(false);
+	};
 
-    var ko = require('knockout');
-    var Clipboard = require('clipboard');
-    app.tbe = require('./teakblocks.js');
-    app.conductor = require('./conductor.js');
-    app.dots = require('./overlays/actionDots.js');
-    app.defaultFiles = require('./defaultFiles.js');
-    app.teaktext = require('./teaktext.js');
+	// Application main, called once shell is fully up.
+	app.start = function () {
+		if (window.cordova !== undefined) {
+			app.platformId = window.cordova.platformId;
+		} else {
+			app.platformId = "broswer";
+		}
 
-    // Add major modules to the application object.
-    var tbe = app.tbe;
+		var isApp = app.isCordovaApp;
+		var w = window.innerWidth;
+		var h = window.innerHeight;
+		var luanchMessage = 'verson:' + app.buildFlags.version + ', isApp:' + app.isCordovaApp + ', platform:' + app.platformId + ', screen:(' + w + ', ' + h + ')';
+		log.trace(luanchMessage);
 
-    app.overlays = require('./overlays/overlays.js').init();
-    // a bit of a hack???
-    app.fileManager = app.overlays.screens.fileOverlay;
-    app.storage = app.fileManager.localStorage();
+		// Once app has started these can be added.
+		document.addEventListener("pause", app.pause, false);
+		document.addEventListener("resume", app.resume, false);
 
-    if (window.MobileAccessibility) {
-      window.MobileAccessibility.usePreferredTextZoom(false);
-    }
+		var ko = require('knockout');
+		var Clipboard = require('clipboard');
+		app.tbe = require('./teakblocks.js');
+		app.conductor = require('./conductor.js');
+		app.dots = require('./overlays/actionDots.js');
+		app.defaultFiles = require('./defaultFiles.js');
+		app.teaktext = require('./teaktext.js');
 
-    // Configuration components for the app and blocks
-    // Initialize knockout databinding for documents DOM
-    tbe.components = {};
-    tbe.components.blockSettings = require('./block-settings.js');
-    ko.applyBindings(tbe.components);
+		// Add major modules to the application object.
+		var tbe = app.tbe;
 
-    var formsDiv = document.getElementById('tbe-forms');
-    tbe.components.blockSettings.insert(formsDiv);
+		app.overlays = require('./overlays/overlays.js').init();
+		// a bit of a hack???
+		app.fileManager = app.overlays.screens.fileOverlay;
+		app.storage = app.fileManager.localStorage();
 
-    var cookieSheet = document.getElementById('cookieSheet');
-    var cookiesAccepted = app.storage.getItem('cookiesAccepted');
-    if (!isApp && (cookiesAccepted === null || cookiesAccepted === false)) {
-      cookieSheet.innerHTML = '\n        <div id=\'cookiesGlass\'></dev>\n        <div id=\'cookiesForm\'>\n            <div id=\'cookiesNote\'>\n              <input id=\'cookiesButton\' type="button" value="  Accept Cookies  " style="float:right">\n              <p>\n                  We use cookies and similar technologies for document\n                  stroage functionality and to measure performance of application features.\n                  You consent to our cookies if you continue to use our website.\n              </p>\n            </div>\n        </div>\n        ';
-      var cookiesButton = document.getElementById('cookiesButton');
-      cookiesButton.onclick = app.hideCookieSheet;
-    }
+		if (window.MobileAccessibility) {
+			window.MobileAccessibility.usePreferredTextZoom(false);
+		}
 
-    // Some early experiments. seems to work well for desktop Chrome
-    // Safari has noticeable lag, with volume fluctuations.
-    tbe.audio = {
-      shortClick: document.getElementById('short-click'),
-      poof: document.getElementById('poof'),
-      playSound: function playSound(element) {
-        // TODO need means to turn off sounds
-        if (!gIOS /* tbe.components.appSettings.editorSounds() */) {
-            element.play();
-          }
-      }
-    };
-    tbe.audio.shortClick.preload = 'true';
-    tbe.audio.poof.preload = 'true';
+		/*
+  else
+  {
+  	window.location.href = "http://tblocks.app.link"; //Testing purposes (redirects to trashbots.github.io)
+  }*/
 
-    var buttonsPages = [{ 'label': 'A', 'command': 'loadDocA' }, { 'label': 'B', 'command': 'loadDocB' }, { 'label': 'C', 'command': 'loadDocC' }, { 'label': 'D', 'command': 'loadDocD' }, { 'label': 'E', 'command': 'loadDocE' }];
-    var buttonsEdit = [{ 'label': fastr.copy, 'command': 'copy' }, { 'label': fastr.paste, 'command': 'paste' }, { 'label': fastr.trash, 'command': 'trash' }, { 'label': fastr.settings, 'command': 'splashOverlay' }];
+		// Configuration components for the app and blocks
+		// Initialize knockout databinding for documents DOM
+		tbe.components = {};
+		tbe.components.blockSettings = require('./block-settings.js');
+		ko.applyBindings(tbe.components);
 
-    tbe.deleteRay = null;
-    tbe.commands = {
-      'play': function play() {
-        app.conductor.playAll();
-      },
-      'stop': function stop() {
-        app.conductor.stopAll();
-      },
-      'trash': function trash() {
-        tbe.clearAllBlocks();
-      },
-      'pages': function pages() {
-        tbe.clearStates();tbe.dropdownButtons = app.dots.showDropdown(buttonsPages, tbe, fastr.folder, 'pages');
-      },
-      'edit': function edit() {
-        tbe.clearStates();tbe.dropdownButtons = app.dots.showDropdown(buttonsEdit, tbe, fastr.edit, 'edit');
-      },
-      'loadDocA': function loadDocA() {
-        tbe.loadDoc('docA');
-      },
-      'loadDocB': function loadDocB() {
-        tbe.loadDoc('docB');
-      },
-      'loadDocC': function loadDocC() {
-        tbe.loadDoc('docC');
-      },
-      'loadDocD': function loadDocD() {
-        tbe.loadDoc('docD');
-      },
-      'loadDocE': function loadDocE() {
-        tbe.loadDoc('docE');
-      },
+		var formsDiv = document.getElementById('tbe-forms');
+		tbe.components.blockSettings.insert(formsDiv);
 
-      'docSnapShot': function docSnapShot() {
-        app.overlays.fileOverlay.cameraFlash();
-      },
-      'driveOverlay': 'driveOverlay',
-      'debugOverlay': 'debugOverlay',
-      'splashOverlay': 'splashOverlay',
-      'deviceScanOverlay': 'deviceScanOverlay',
+		var cookieSheet = document.getElementById('cookieSheet');
+		var cookiesAccepted = app.storage.getItem('cookiesAccepted');
+		if (!isApp && (cookiesAccepted === null || cookiesAccepted === false)) {
+			cookieSheet.innerHTML = '\n        <div id=\'cookiesGlass\'></dev>\n        <div id=\'cookiesForm\'>\n            <div id=\'cookiesNote\'>\n\t\t\t  <input id=\'cookiesButton\' type="button" value="  Accept Cookies  " style="float:right">\n              <p>\n                  We use cookies and similar technologies for document\n                  stroage functionality and to measure performance of application features.\n                  You consent to our cookies if you continue to use our website.\n              </p>\n            </div>\n        </div>\n        ';
+			var cookiesButton = document.getElementById('cookiesButton');
+			cookiesButton.onclick = app.hideCookieSheet;
+		}
 
-      'settings': function settings() {
-        tbe.loadSettings();
-      },
-      'copy': function copy() {
-        tbe.copyText = app.teaktext.blocksToText(tbe.forEachDiagramChain);
-      },
-      'paste': function paste() {
-        if (tbe.copyTest !== null) {
-          app.teaktext.textToBlocks(tbe, tbe.copyText);
-        }
-      },
-      'save': function save() {
-        var currentDocText = app.teaktext.blocksToText(tbe.forEachDiagramChain);
-        app.storage.setItem(tbe.currentDoc, currentDocText);
-      },
-      'calibrate': 'calibrationOverlay'
-    };
+		// Some early experiments. seems to work well for desktop Chrome
+		// Safari has noticeable lag, with volume fluctuations.
+		tbe.audio = {
+			shortClick: document.getElementById('short-click'),
+			poof: document.getElementById('poof'),
+			playSound: function playSound(element) {
+				// TODO need means to turn off sounds
+				if (!gIOS /* tbe.components.appSettings.editorSounds() */) {
+						element.play();
+					}
+			}
+		};
+		tbe.audio.shortClick.preload = 'true';
+		tbe.audio.poof.preload = 'true';
 
-    // Construct the clipboard
-    var clipboard = new Clipboard('.copy-button', {
-      text: function text() {
-        return app.teaktext.blocksToText(tbe.forEachDiagramChain);
-      }
-    });
-    clipboard.on('success', function (e) {
-      log.trace('clipboard success', e);
-    });
-    clipboard.on('error', function (e) {
-      log.trace('clipboard error', e);
-    });
+		var buttonsPages = [{ 'label': 'A', 'command': 'loadDocA' }, { 'label': 'B', 'command': 'loadDocB' }, { 'label': 'C', 'command': 'loadDocC' }, { 'label': 'D', 'command': 'loadDocD' }, { 'label': 'E', 'command': 'loadDocE' }];
+		var buttonsEdit = [{ 'label': fastr.copy, 'command': 'copy' }, { 'label': fastr.paste, 'command': 'paste' }, { 'label': fastr.trash, 'command': 'trash' }, { 'label': fastr.settings, 'command': 'splashOverlay' }];
 
-    // these could be loaded from JSON files/strings
-    var package1 = {
-      blocks: [
-      // Start Blocks
-      { name: 'identity', group: 'start' }, { name: 'identityAccelerometer', group: 'start' }, { name: 'identityButton', group: 'start' }, { name: 'identityTemperature', group: 'start' },
-      // Function Blocks
-      { name: 'picture', group: 'fx' }, { name: 'sound', group: 'fx' }, { name: 'motor', group: 'fx' }, { name: 'twoMotor', group: 'fx' }, { name: 'variableSet', group: 'fx' }, { name: 'variableAdd', group: 'fx' }, { name: 'print', group: 'fx' },
-      // Control Blocks
-      { name: 'wait', group: 'control' }, { name: 'loop', group: 'control' }]
-    };
+		tbe.deleteRay = null;
+		tbe.commands = {
+			'play': function play() {
+				app.conductor.playAll();
+			},
+			'stop': function stop() {
+				app.conductor.stopAll();
+			},
+			'trash': function trash() {
+				tbe.clearAllBlocks();
+			},
+			'pages': function pages() {
+				tbe.clearStates();tbe.dropdownButtons = app.dots.showDropdown(buttonsPages, tbe, fastr.folder, 'pages');
+			},
+			'edit': function edit() {
+				tbe.clearStates();tbe.dropdownButtons = app.dots.showDropdown(buttonsEdit, tbe, fastr.edit, 'edit');
+			},
+			'loadDocA': function loadDocA() {
+				tbe.loadDoc('docA');
+			},
+			'loadDocB': function loadDocB() {
+				tbe.loadDoc('docB');
+			},
+			'loadDocC': function loadDocC() {
+				tbe.loadDoc('docC');
+			},
+			'loadDocD': function loadDocD() {
+				tbe.loadDoc('docD');
+			},
+			'loadDocE': function loadDocE() {
+				tbe.loadDoc('docE');
+			},
 
-    var actionButtonDefs = [{ 'alignment': 'L', 'label': fastr.play, 'command': 'play', 'tweakx': 4 }, { 'alignment': 'L', 'label': fastr.stop, 'command': 'stop' }, { 'alignment': 'L', 'label': fastr.gamepad, 'command': 'driveOverlay' }, { 'alignment': 'M', 'label': fastr.debug, 'command': 'debugOverlay' }, { 'alignment': 'M', 'label': fastr.file, 'command': 'pages', 'sub': buttonsPages }, { 'alignment': 'M', 'label': fastr.edit, 'command': 'edit', 'sub': buttonsEdit }, { 'alignment': 'M', 'label': fastr.calibrate, 'command': 'calibrate' }, { 'alignment': 'R', 'label': '', 'command': 'deviceScanOverlay' }];
+			'docSnapShot': function docSnapShot() {
+				app.overlays.fileOverlay.cameraFlash();
+			},
+			'driveOverlay': 'driveOverlay',
+			'debugOverlay': 'debugOverlay',
+			'splashOverlay': 'splashOverlay',
+			'deviceScanOverlay': 'deviceScanOverlay',
 
-    var base = app.dots.defineButtons(actionButtonDefs, document.getElementById('editorSvgCanvas'));
-    // It seesm SVG eat all the events, even ones that don't hit any objects :(
-    //actionDots.defineButtons(actionButtonDefs, document.getElementById('actionDotSvgCanvas'));
+			'settings': function settings() {
+				tbe.loadSettings();
+			},
+			'copy': function copy() {
+				tbe.copyText = app.teaktext.blocksToText(tbe.forEachDiagramChain);
+			},
+			'paste': function paste() {
+				if (tbe.copyTest !== null) {
+					app.teaktext.textToBlocks(tbe, tbe.copyText);
+				}
+			},
+			'save': function save() {
+				var currentDocText = app.teaktext.blocksToText(tbe.forEachDiagramChain);
+				app.storage.setItem(tbe.currentDoc, currentDocText);
+			},
+			'calibrate': 'calibrationOverlay'
+		};
 
-    // This is pretty Wonky
-    app.defaultFiles.setupDefaultPages(false);
+		// Construct the clipboard
+		var clipboard = new Clipboard('.copy-button', {
+			text: function text() {
+				return app.teaktext.blocksToText(tbe.forEachDiagramChain);
+			}
+		});
+		clipboard.on('success', function (e) {
+			log.trace('clipboard success', e);
+		});
+		clipboard.on('error', function (e) {
+			log.trace('clipboard error', e);
+		});
 
-    tbe.init(document.getElementById('editorSvgCanvas'), base);
+		// these could be loaded from JSON files/strings
+		var package1 = {
+			blocks: [
+			// Start Blocks
+			{ name: 'identity', group: 'start' }, { name: 'identityAccelerometer', group: 'start' }, { name: 'identityButton', group: 'start' }, { name: 'identityTemperature', group: 'start' },
+			// Function Blocks
+			{ name: 'picture', group: 'fx' }, { name: 'sound', group: 'fx' }, { name: 'motor', group: 'fx' }, { name: 'twoMotor', group: 'fx' }, { name: 'variableSet', group: 'fx' }, { name: 'variableAdd', group: 'fx' }, { name: 'print', group: 'fx' },
+			// Control Blocks
+			{ name: 'wait', group: 'control' }, { name: 'loop', group: 'control' }]
+		};
 
-    var loadedDocText = app.storage.getItem('docA');
-    if (loadedDocText !== null) {
-      app.teaktext.textToBlocks(tbe, loadedDocText);
-    }
+		var actionButtonDefs = [{ 'alignment': 'L', 'label': fastr.play, 'command': 'play', 'tweakx': 4 }, { 'alignment': 'L', 'label': fastr.stop, 'command': 'stop' }, { 'alignment': 'L', 'label': fastr.gamepad, 'command': 'driveOverlay' }, { 'alignment': 'M', 'label': fastr.debug, 'command': 'debugOverlay' }, { 'alignment': 'M', 'label': fastr.file, 'command': 'pages', 'sub': buttonsPages }, { 'alignment': 'M', 'label': fastr.edit, 'command': 'edit', 'sub': buttonsEdit }, { 'alignment': 'M', 'label': fastr.calibrate, 'command': 'calibrate' }, { 'alignment': 'R', 'label': '', 'command': 'deviceScanOverlay' }];
 
-    // Add the main command buttons, to left, middle and right locations.
-    tbe.addPalette(package1);
+		var base = app.dots.defineButtons(actionButtonDefs, document.getElementById('editorSvgCanvas'));
+		// It seesm SVG eat all the events, even ones that don't hit any objects :(
+		//actionDots.defineButtons(actionButtonDefs, document.getElementById('actionDotSvgCanvas'));
 
-    // Connect to resize event for refresh. Make initial call
-    document.body.onresize = tbe.resize;
-    tbe.resize();
+		// This is pretty Wonky
+		app.defaultFiles.setupDefaultPages(false);
 
-    app.conductor.attachToScoreEditor(tbe);
+		tbe.init(document.getElementById('editorSvgCanvas'), base);
 
-    var showSplashAtAlunch = app.isRegularBrowser;
-    showSplashAtAlunch = false; // For quick codova style test in browsers.
-    if (showSplashAtAlunch && app.splashOverlay.showLaunchAboutBox()) {
-      app.doCommand('splashOverlay');
-    }
-  };
+		var loadedDocText = app.storage.getItem('docA');
+		if (loadedDocText !== null) {
+			app.teaktext.textToBlocks(tbe, loadedDocText);
+		}
 
-  app.doCommand = function (commandName) {
-    // Write the current doc state to storage insert
-    // before any command
-    app.tbe.saveCurrentDoc();
+		// Add the main command buttons, to left, middle and right locations.
+		tbe.addPalette(package1);
 
-    var cmd = app.tbe.commands[commandName];
-    if (app.overlays.isAnimating) {
-      return;
-    }
+		// Connect to resize event for refresh. Make initial call
+		document.body.onresize = tbe.resize;
+		tbe.resize();
 
-    if (app.overlays.currentShowing !== null) {
-      // First hide the current one, then
-      // invoke the command once hiding animation is done.
-      if (app.overlays.currentShowing === cmd) {
-        // Simply hide if its the same overlay.
-        app.dots.activate(commandName, 0);
-        app.overlays.hideOverlay(null);
-      } else {
-        if (typeof cmd === 'string') {
-          app.dots.activate(commandName, 3);
-        }
-        app.overlays.hideOverlay(function () {
-          app.doCommand(commandName);
-        });
-      }
-    } else if (typeof cmd === 'function') {
-      cmd();
-    } else if (typeof cmd === 'string') {
-      app.dots.activate(cmd, 3);
-      app.overlays.showOverlay(cmd);
-    }
-  };
+		app.conductor.attachToScoreEditor(tbe);
 
-  return app;
+		var showSplashAtAlunch = app.isRegularBrowser;
+		showSplashAtAlunch = false; // For quick codova style test in browsers.
+		if (showSplashAtAlunch && app.splashOverlay.showLaunchAboutBox()) {
+			app.doCommand('splashOverlay');
+		}
+	};
+
+	app.doCommand = function (commandName) {
+		// Write the current doc state to storage insert
+		// before any command
+		app.tbe.saveCurrentDoc();
+
+		var cmd = app.tbe.commands[commandName];
+		if (app.overlays.isAnimating) {
+			return;
+		}
+
+		if (app.overlays.currentShowing !== null) {
+			// First hide the current one, then
+			// invoke the command once hiding animation is done.
+			if (app.overlays.currentShowing === cmd) {
+				// Simply hide if its the same overlay.
+				app.dots.activate(commandName, 0);
+				app.overlays.hideOverlay(null);
+			} else {
+				if (typeof cmd === 'string') {
+					app.dots.activate(commandName, 3);
+				}
+				app.overlays.hideOverlay(function () {
+					app.doCommand(commandName);
+				});
+			}
+		} else if (typeof cmd === 'function') {
+			cmd();
+		} else if (typeof cmd === 'string') {
+			app.dots.activate(cmd, 3);
+			app.overlays.showOverlay(cmd);
+		}
+	};
+
+	return app;
 }();
 
 },{"../buildFlags.js":1,"./block-settings.js":14,"./conductor.js":33,"./defaultFiles.js":35,"./overlays/actionDots.js":38,"./overlays/overlays.js":44,"./teakblocks.js":46,"./teaktext.js":48,"clipboard":3,"fastr.js":51,"knockout":9,"log.js":53}],14:[function(require,module,exports){
@@ -11303,7 +11329,7 @@ module.exports = function factory() {
 
   cxn.write = function (name, message) {
     if (!cxn.calibrating) {
-      console.log(cxn.calibrating);
+      //console.log(cxn.calibrating);
       try {
         if (cxn.devices.hasOwnProperty(name)) {
           var mac = cxn.devices[name].mac;
@@ -11547,34 +11573,51 @@ SOFTWARE.
 */
 
 var app = require('./appMain.js');
+var overlays = require('./overlays/overlays.js').init();
 
 // Determine if page launched in broswer, or cordova/phone-gap app.
 app.isRegularBrowser = document.URL.indexOf('http://') >= 0 || document.URL.indexOf('https://') >= -0;
 
 if (!app.isRegularBrowser) {
 
-  // Add view port info dynamically. might help iOS WKWebview
-  var meta = document.createElement('meta');
-  meta.name = 'viewport';
-  meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0';
-  document.getElementsByTagName('head')[0].appendChild(meta);
-  //<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	// Add view port info dynamically. might help iOS WKWebview
+	var meta = document.createElement('meta');
+	meta.name = 'viewport';
+	meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0';
+	document.getElementsByTagName('head')[0].appendChild(meta);
+	//<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
 
-  app.isCordovaApp = true;
-  // Guess that it is Cordova then. Not intened to run directly from file:
-  document.addEventListener('deviceready', app.start, false);
-  var script = document.createElement('script');
-  // Load cordova.js if not in regular browser, and then set up initialization.
-  script.setAttribute('src', './cordova.js');
-  document.head.appendChild(script);
+	app.isCordovaApp = true;
+	// Guess that it is Cordova then. Not intened to run directly from file:
+	document.addEventListener('deviceready', app.start, false);
+	var script = document.createElement('script');
+	// Load cordova.js if not in regular browser, and then set up initialization.
+	script.setAttribute('src', './cordova.js');
+	document.head.appendChild(script);
 } else {
-  // If in regular broswer, call start directly.
-  app.isCordovaApp = false;
-  app.start();
+	// If in regular broswer, call start directly.
+	var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+	if (isMobile) {
+		//window.location.href = 'landingPage.html'
+		overlays.insertHTML('\n        <div id=\'mobileOverlay\'>\n            <div id=\'mobileDialog\'>\n\t\t\t  <h1 style = "text-align:center">You are on a mobile Device</h1>\n\t\t\t\t<div style = "text-align:center;">\n\t\t\t\t\tConsider using our mobile app instead: <a href = "https://tblocks.app.link">TBlocks</a>\n\t\t\t\t</div>\n\t\t\t\t<br>\n\t\t\t\t<br>\n\t\t\t\t<div style = "text-align:center;">\n\t\t\t\t\tOr continue with <a id="regularWebsite" href = \'#\'>our website</a>.\n\t\t\t\t</div>\n\t\t\t  </div>\n\t\t</div>');
+		var regularWebsite = document.getElementById("regularWebsite");
+		regularWebsite.onclick = function () {
+			document.getElementById("mobileOverlay").style.display = "none";
+			event.preventDefault();
+			app.isCordovaApp = false;
+			app.start();
+		};
+	} //			 <a href="https://tblocks.app.link">tblocks</a> 			  <h3 style = "text-align:center;">Considering using our mobile app instead: </h3>
+
+
+	else {
+			app.isCordovaApp = false;
+			app.start();
+		}
 }
 
-},{"./appMain.js":13}],38:[function(require,module,exports){
+},{"./appMain.js":13,"./overlays/overlays.js":44}],38:[function(require,module,exports){
 'use strict';
 
 /*
@@ -11743,7 +11786,7 @@ module.exports = function () {
     var dotHalf = dotd / 2;
     var fontY = y + dotHalf + fontSize / 3;
 
-    console.log(dso.robotOnlyPos);
+    //console.log(dso.robotOnlyPos)
     //Check if character strings are more than one character to create a label on top of the usual label
     if (this.command === 'deviceScanOverlay') {
 
@@ -11764,7 +11807,7 @@ module.exports = function () {
       this.batteryText = svgb.createText('fa fas action-dot-fatext', buttonCenter + buttonWidth / 6, y + dotd * 0.75 + fontSize / 3, "");
       this.batteryText.setAttribute('id', 'battery-label');
 
-      editStyle.setFontSize(this.svgText.style, fontSize * 1.1);
+      editStyle.setFontSize(this.svgText.style, fontSize * 1);
       editStyle.setFontSize(this.batteryText.style, fontSize * 0.95);
       editStyle.setFontSize(this.nameText.style, fontSize * 0.8);
     } else if (this.label === fastr.file) {
@@ -12083,7 +12126,7 @@ module.exports = function () {
   // External function for putting it all together.
   calibrationOverlay.start = function () {
 
-    overlays.insertHTML('\n        <style id=\'calibration-text-id\'>\n          calibration-text { font-size:18px; }\n        </style>\n        <div id=\'calibrationOverlay\'>\n            <div id=\'calibrationDialog\'>\n              <p class=\'calibration-title\'>Smart Steering Calibration</p>\n              <p class=\'calibration-body calibration-text\'>Click below to activate Smart Steering Calibration, a PID based system for accurate driving</p>\n              <!--p id = \'calibration-copy\' class=\'calibration-body calibration-text\'>\xA9 2020 Trashbots. All rights reserved.</p-->\n              <br>\n            <div id=\'calibration-button-area\'>\n                <button id=\'calibration-activate\' class=\'calibration-button calibration-text\'>Begin calibration!</button>\n            </div>\n            <br><br>\n            <button id=\'calibration-done\' class=\'calibration-button calibration-text\'>Close.</button>\n            <br>\n            </div>\n        </div>');
+    overlays.insertHTML('\n\t\t<style id=\'calibration-text-id\'>\n\t\t\tcalibration-text { font-size:18px; }\n\t\t</style>\n\t\t<div id=\'calibrationOverlay\'>\n\t\t\t<div id=\'calibrationDialog\'>\n\t\t\t\t<p class=\'calibration-title\'>Smart Steering Calibration</p>\n\t\t\t\t<p class=\'calibration-body calibration-text\'>Click below to activate Smart Steering Calibration, a PID based system for accurate driving</p>\n\t\t\t\t<!--p id = \'calibration-copy\' class=\'calibration-body calibration-text\'>\xA9 2020 Trashbots. All rights reserved.</p-->\n\t\t\t\t<br>\n\t\t\t<div id=\'calibration-button-area\'>\n\t\t\t\t<button id=\'calibration-activate\' class=\'calibration-button calibration-text\'>Begin calibration!</button>\n\t\t\t</div>\n\t\t\t<br><br>\n\t\t\t<button id=\'calibration-done\' class=\'calibration-button calibration-text\'>Close.</button>\n\t\t\t<br>\n\t\t\t</div>\n\t\t</div>');
 
     var caliArea = document.getElementById('calibration-button-area');
 
@@ -12272,9 +12315,11 @@ module.exports = function () {
 
   dso.getBattery = function () {
     var percent = cxn.batteryPercent;
-    if (dso.deviceName === dso.nonName) {
-      return "";
-    } else if (percent > fullThreshold) {
+    /*if (dso.deviceName === dso.nonName)
+    {
+      return ""
+    }
+    else */if (percent > fullThreshold) {
       return fastr.batteryFull;
     } else if (percent > threeQuartersThreshold) {
       return fastr.batteryThreeQuarters;
@@ -12291,13 +12336,15 @@ module.exports = function () {
     dso.deviceName = botName;
     dso.disconnectButton.disabled = dso.deviceName === dso.nonName;
     // console.log(dso.decoratedName())
-    // console.log(dso.getBattery())
+    // console.log(cxn.versionNumber)
     //dso.deviceName = "vegat"
-    if (dso.deviceName !== dso.nonName) {
+    if (cxn.versionNumber >= 11 && dso.deviceName !== dso.nonName) {
       dso.deviceNameLabel.innerHTML = fastr.robot;
       dso.deviceNameLabel.setAttribute('x', dso.robotOnlyPos);
       dso.batteryLabel.innerHTML = dso.getBattery();
       dso.actualNameLabel.innerHTML = dso.deviceName;
+    } else {
+      dso.deviceNameLabel.innerHTML = fastr.robot + ' ' + dso.deviceName;
     }
     //console.log(dso.deviceNameLabel.innerHTML)
   };
