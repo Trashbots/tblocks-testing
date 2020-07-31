@@ -10280,7 +10280,6 @@ module.exports = function () {
   // Items for selecting a device from a list.
   //identityAccelerometer.devices = ko.observableArray([]);
   variableAddBlock.keyPadValue = ko.observable(0);
-
   // Initial settings for blocks of this type.
   variableAddBlock.defaultSettings = function () {
     // Return a new object with settings for the controller.
@@ -10318,7 +10317,7 @@ module.exports = function () {
       'suffix': "",
       'numArray': ["-1", "C", "+1", "-10", undefined, "+10"],
       'calcLayout': 'simple',
-      'inner': '<div id=\'keypadDiv\' class=\'editorDiv\'>\n          <select class="dropdown-comparison vars-dropdown-comparison" id="var-list">\n          </select>\n          <div class="dropdown-label-txt varAdd-label-txt svg-clear" id="varAdd-incdec">\uF061\n          </div>\n          <div id="numeric-display" class = "numeric-display-third svg-clear" width=\'30px\' height=\'80px\' data-bind=\'text: keyPadValue\'>\n          </div>\n          <svg id="keypadSvg" class=\'area\' width=\'225px\' height=\'200px\' xmlns=\'http://www.w3.org/2000/svg\'></svg>\n      </div>'
+      'inner': '<div id=\'keypadDiv\' class=\'editorDiv\'>\n          <select class="dropdown-comparison vars-dropdown-comparison" id="var-list">\n          </select>\n          <div class="dropdown-label-txt varAdd-label-txt svg-clear" id="varAdd-incdec">\u2192\n          </div>\n          <div id="numeric-display" class = "numeric-display-third svg-clear" width=\'30px\' height=\'80px\' data-bind=\'text: keyPadValue\'>\n          </div>\n          <svg id="keypadSvg" class=\'area\' width=\'225px\' height=\'200px\' xmlns=\'http://www.w3.org/2000/svg\'></svg>\n      </div>'
     });
 
     // Add variables to the drop down.
@@ -11599,12 +11598,13 @@ if (!app.isRegularBrowser) {
 	// If in regular broswer, call start directly.
 	var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 	if (isMobile) {
-		//window.location.href = 'landingPage.html'
-		overlays.insertHTML('\n        <div id=\'mobileOverlay\'>\n            <div id=\'mobileDialog\'>\n\t\t\t  <h1 style = "text-align:center">You are on a mobile Device</h1>\n\t\t\t\t<div style = "text-align:center;">\n\t\t\t\t\tConsider using our mobile app instead: <a href = "https://tblocks.app.link">TBlocks</a>\n\t\t\t\t</div>\n\t\t\t\t<br>\n\t\t\t\t<br>\n\t\t\t\t<div style = "text-align:center;">\n\t\t\t\t\tOr continue with <a id="regularWebsite" href = \'#\'>our website</a>.\n\t\t\t\t</div>\n\t\t\t  </div>\n\t\t</div>');
+		// Build the HTML for mobile overlay without animation
+		overlays.insertHTML('\n\t\t\t<div id=\'mobileOverlay\'>\n\t\t\t\t<div id=\'mobileDialog\'>\n\t\t\t\t<h1 style = "text-align:center">You are on a mobile Device</h1>\n\t\t\t\t\t<div style = "text-align:center;">\n\t\t\t\t\t\tConsider using our mobile app instead: <a href = "https://tblocks.app.link">TBlocks</a>\n\t\t\t\t\t</div>\n\t\t\t\t\t<br>\n\t\t\t\t\t<br>\n\t\t\t\t\t<div style = "text-align:center;">\n\t\t\t\t\t\tOr continue with <a href = \'#\' id="regularWebsite">our website</a>.\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>');
 		var regularWebsite = document.getElementById("regularWebsite");
 		regularWebsite.onclick = function () {
+			overlays.currentIsClosing = true;
 			document.getElementById("mobileOverlay").style.display = "none";
-			event.preventDefault();
+			overlays.overlayShell.classList.add('fullScreenSlideOut');
 			app.isCordovaApp = false;
 			app.start();
 		};
