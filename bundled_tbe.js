@@ -9670,132 +9670,152 @@ SOFTWARE.
 */
 
 module.exports = function () {
-  var interact = require('interact.js');
-  var ko = require('knockout');
-  var svgb = require('svgbuilder.js');
-  var icons = require('icons.js');
-  var printBlock = {};
-  var vars = require('./../variables.js');
-  var fastr = require('fastr.js');
+	var interact = require('interact.js');
+	var ko = require('knockout');
+	var svgb = require('svgbuilder.js');
+	var icons = require('icons.js');
+	var printBlock = {};
+	var vars = require('./../variables.js');
+	var fastr = require('fastr.js');
 
-  // Items for selecting a device from a list.
-  //identityAccelerometer.devices = ko.observableArray([]);
-  printBlock.keyPadValue = ko.observable(0);
+	// Items for selecting a device from a list.
+	//identityAccelerometer.devices = ko.observableArray([]);
+	printBlock.keyPadValue = ko.observable(0);
 
-  // Initial settings for blocks of this type.
-  printBlock.defaultSettings = function () {
-    // Return a new object with settings for the controller.
-    return {
-      data: {
-        // What to print: var, sensor
-        print: 'var',
-        variable: 'A',
-        sensor: 'temperature',
-        button: 'A',
-        // Value
-        value: 0
-      }
-    };
-  };
+	// Initial settings for blocks of this type.
+	printBlock.defaultSettings = function () {
+		// Return a new object with settings for the controller.
+		return {
+			data: {
+				// What to print: var, sensor
+				print: 'var',
+				variable: 'A',
+				sensor: 'temperature',
+				button: 'A',
+				// Value
+				value: 0
+			}
+		};
+	};
 
-  printBlock.configuratorOpen = function (div, block) {
-    var data = block.controllerSettings.data;
-    printBlock.activeBlock = block;
-    div.innerHTML = '<div id=\'printEditorDiv\' class=\'editorDiv\'>\n          <div id=\'printBlock-editor\'>\n          </div>\n          <div class=\'printBlock-buttons\' y="100%">\n            <div class=\'printBlock-option\' value=\'A\'>\n              <svg id=\'variable-option\' class="svg-clear" width=\'60px\' height=\'40px\' xmlns=\'http://www.w3.org/2000/svg\'></svg>\n            </div>\n            <div class=\'printBlock-option\' value=\'B\'>\n              <span class="svg-clear data-option">' + fastr.data + '</span>\n            </div>\n          </div>\n          <div class="vert-line"></div>\n        </div>';
-    var variableOption = document.getElementById('variable-option');
-    var button = icons.variable(0.9, 4, 1, '');
-    variableOption.appendChild(button);
+	printBlock.configuratorOpen = function (div, block) {
+		var data = block.controllerSettings.data;
+		printBlock.activeBlock = block;
+		div.innerHTML = '<div id=\'printEditorDiv\' class=\'editorDiv\'>\n          <div id=\'printBlock-editor\'>\n          </div>\n          <div class=\'printBlock-buttons\' y="100%">\n            <div class=\'printBlock-option\' value=\'A\'>\n              <svg id=\'variable-option\' class="svg-clear" width=\'60px\' height=\'40px\' xmlns=\'http://www.w3.org/2000/svg\'></svg>\n            </div>\n            <div class=\'printBlock-option\' value=\'B\'>\n              <span class="svg-clear data-option">' + fastr.data + '</span>\n            </div>\n          </div>\n          <div class="vert-line"></div>\n        </div>';
+		var variableOption = document.getElementById('variable-option');
+		var button = icons.variable(0.9, 4, 1, '');
+		variableOption.appendChild(button);
 
-    printBlock.loadSlide(data.button, block);
+		printBlock.loadSlide(data.button, block);
 
-    var selObj = document.getElementById("var-list");
-    var opts = selObj.options;
-    for (var i = 0; i < opts.length; i++) {
-      if (data.print === 'var' && opts[i].value === data.variable) {
-        selObj.selectedIndex = i;
-        break;
-      } else if (data.print === 'sensor' && opts[i].value === data.sensor) {
-        selObj.selectedIndex = i;
-        break;
-      }
-    }
+		var selObj = document.getElementById("var-list");
+		var opts = selObj.options;
+		for (var i = 0; i < opts.length; i++) {
+			if (data.print === 'var' && opts[i].value === data.variable) {
+				selObj.selectedIndex = i;
+				break;
+			} else if (data.print === 'sensor' && opts[i].value === data.sensor) {
+				selObj.selectedIndex = i;
+				break;
+			}
+		}
 
-    interact('.printBlock-option').on('down', function (event) {
-      var button = event.srcElement;
-      var tabs = document.getElementsByClassName('printBlock-option');
-      for (var k = 0; k < tabs.length; k++) {
-        tabs[k].setAttribute('class', 'printBlock-option');
-      }
-      button.classList.add('printBlock-selected');
-      printBlock.loadSlide(button.getAttribute('value'), block);
-    });
-  };
+		interact('.printBlock-option').on('down', function (event) {
+			var button = event.srcElement;
+			var tabs = document.getElementsByClassName('printBlock-option');
+			for (var k = 0; k < tabs.length; k++) {
+				tabs[k].setAttribute('class', 'printBlock-option');
+			}
+			button.classList.add('printBlock-selected');
+			printBlock.loadSlide(button.getAttribute('value'), block);
+		});
+	};
 
-  printBlock.loadSlide = function (buttonName, block) {
-    var editor = document.getElementById('printBlock-editor');
-    var opts = document.getElementsByClassName('printBlock-option');
-    for (var i = 0; i < opts.length; i++) {
-      if (opts[i].getAttribute('value') === buttonName) {
-        opts[i].setAttribute('class', 'printBlock-option printBlock-selected');
-      }
-    }
-    if (buttonName === 'A') {
-      // var
-      block.controllerSettings.data.print = "var";
-      block.controllerSettings.data.button = "A";
-      editor.innerHTML = '<select class="dropdown-comparison printBlock-dropdown" id="var-list">\n      </select>';
+	printBlock.loadSlide = function (buttonName, block) {
+		var editor = document.getElementById('printBlock-editor');
+		var opts = document.getElementsByClassName('printBlock-option');
+		for (var i = 0; i < opts.length; i++) {
+			if (opts[i].getAttribute('value') === buttonName) {
+				opts[i].setAttribute('class', 'printBlock-option printBlock-selected');
+			}
+		}
+		if (buttonName === 'A') {
+			// var
+			block.controllerSettings.data.print = "var";
+			block.controllerSettings.data.button = "A";
+			editor.innerHTML = '<select class="dropdown-comparison printBlock-dropdown" id="var-list">\n      </select>';
 
-      // Add variables to the drop down.
-      var selObj = document.getElementById("var-list");
-      vars.addOptions(selObj, block.controllerSettings.data.variable);
-    } else if (buttonName === 'B') {
-      //sensor
-      block.controllerSettings.data.print = "sensor";
-      block.controllerSettings.data.button = "B";
-      editor.innerHTML = '<select class="dropdown-comparison printBlock-dropdown" id="var-list">\n        <option value="temperature">temperature</option>\n        <option value="accelerometer">accelerometer</option>\n      </select>';
-    }
-  };
+			// Add variables to the drop down.
+			var selObj = document.getElementById("var-list");
+			vars.addOptions(selObj, block.controllerSettings.data.variable);
+		} else if (buttonName === 'B') {
+			//sensor
+			block.controllerSettings.data.print = "sensor";
+			block.controllerSettings.data.button = "B";
+			editor.innerHTML = '<select class="dropdown-comparison printBlock-dropdown" id="var-list">\n        <option value="temperature">temperature</option>\n        <option value="accelerometer">accelerometer</option>\n      </select>';
+		}
+	};
 
-  // Close the identity blocks and clean up hooks related to it.
-  printBlock.configuratorClose = function (div, block) {
-    var selObj = document.getElementById('var-list');
-    var opt = vars.getSelected(selObj);
-    var data = block.controllerSettings.data;
-    if (data.print === 'var') {
-      data.variable = opt;
-    } else if (data.print === 'sensor') {
-      data.sensor = opt;
-    }
-    block.updateSvg();
-    printBlock.activeBlock = null;
-  };
+	// Close the identity blocks and clean up hooks related to it.
+	printBlock.configuratorClose = function (div, block) {
+		var selObj = document.getElementById('var-list');
+		var opt = vars.getSelected(selObj);
+		var data = block.controllerSettings.data;
+		if (data.print === 'var') {
+			data.variable = opt;
+		} else if (data.print === 'sensor') {
+			data.sensor = opt;
+		}
+		// let x = getPrintVal(block.controllerSettings.data);
+		// block.controllerSettings.data.duration = x.toString().length;
 
-  // Buid an SVG for the block that indicates the device name
-  // and connection status
-  printBlock.svg = function (root, block) {
-    var board = icons.pictureNumeric(1, 32, 15);
-    board.setAttribute('text-anchor', 'middle');
-    root.appendChild(board);
+		block.updateSvg();
+		printBlock.activeBlock = null;
+	};
 
-    var print = block.controllerSettings.data.print;
-    if (print === 'var') {
-      var varData = block.controllerSettings.data.variable;
-      var variable = icons.variable(0.5, 32, 52, varData);
-      root.appendChild(variable);
-    } else if (print === 'sensor') {
-      var sensor = block.controllerSettings.data.sensor;
-      if (sensor === 'accelerometer') {
-        var accel = icons.accelerometer(0.50, 'block-stencil-fill svg-clear', 90, 135);
-        root.appendChild(accel);
-      } else if (sensor === 'temperature') {
-        var temp = svgb.createText('fa block-identity-text svg-clear', 90, 160, '\uF2C9');
-        temp.setAttribute('transform', 'scale(0.45)');
-        root.appendChild(temp);
-      }
-    }
-  };
+	// Buid an SVG for the block that indicates the device name
+	// and connection status
+	printBlock.svg = function (root, block) {
+		var board = icons.pictureNumeric(1, 32, 15);
+		board.setAttribute('text-anchor', 'middle');
+		root.appendChild(board);
 
-  return printBlock;
+		var print = block.controllerSettings.data.print;
+		if (print === 'var') {
+			var varData = block.controllerSettings.data.variable;
+			var variable = icons.variable(0.5, 32, 52, varData);
+			root.appendChild(variable);
+		} else if (print === 'sensor') {
+			var sensor = block.controllerSettings.data.sensor;
+			if (sensor === 'accelerometer') {
+				var accel = icons.accelerometer(0.50, 'block-stencil-fill svg-clear', 90, 135);
+				root.appendChild(accel);
+			} else if (sensor === 'temperature') {
+				var temp = svgb.createText('fa block-identity-text svg-clear', 90, 160, '\uF2C9');
+				temp.setAttribute('transform', 'scale(0.45)');
+				root.appendChild(temp);
+			}
+		}
+	};
+	// printBlock.getPrintVal = function (d) {
+	// 	var val = 0;
+	// 	if (d.print === 'var') {
+	// 		console.log('var------');
+	// 		val = variables.get(d.variable);
+	// 	} else if (d.print === 'sensor') {
+	// 		console.log('sensor------');
+	// 		if (d.sensor === 'accelerometer') {
+	// 			val = cxn.accelerometer;
+	// 		} else if (d.sensor === 'temperature') {
+	// 			val = cxn.temperature;
+	// 		}
+	// 	}
+	// 	console.log('conductor print', d.print, d.variable, d.sensor, val);
+	// 	return val;
+	// };
+
+
+	return printBlock;
 }();
 
 },{"./../variables.js":57,"fastr.js":51,"icons.js":52,"interact.js":8,"knockout":9,"svgbuilder.js":55}],27:[function(require,module,exports){
@@ -10536,6 +10556,8 @@ module.exports = function () {
 },{"./keypadTab.js":23,"icons.js":52,"knockout":9,"svgbuilder.js":55}],33:[function(require,module,exports){
 'use strict';
 
+/* eslint-disable max-depth */
+/* eslint-disable complexity */
 /*
 Copyright (c) 2020 Trashbots - SDG
 
@@ -10559,317 +10581,339 @@ SOFTWARE.
 */
 
 module.exports = function () {
-  var log = require('log.js');
-  var conductor = {};
-  var dso = require('./overlays/deviceScanOverlay.js');
-  var dots = require('./overlays/actionDots.js');
-  var cxn = require('./cxn.js');
-  var variables = require('./variables.js');
+	var log = require('log.js');
+	var conductor = {};
+	var dso = require('./overlays/deviceScanOverlay.js');
+	var dots = require('./overlays/actionDots.js');
+	var cxn = require('./cxn.js');
+	var variables = require('./variables.js');
 
-  conductor.cxn = require('./cxn.js');
-  conductor.tbe = null;
-  conductor.hbTimer = 0;
-  conductor.sensorTimer = 0;
-  conductor.runningBlocks = [];
-  conductor.count = null;
-  conductor.defaultPix = '0000000000';
-  conductor.run = false;
-  conductor.soundCount = 0;
+	conductor.cxn = require('./cxn.js');
+	conductor.tbe = null;
+	conductor.hbTimer = 0;
+	conductor.sensorTimer = 0;
+	conductor.runningBlocks = [];
+	conductor.count = null;
+	conductor.defaultPix = '0000000000';
+	conductor.run = false;
+	conductor.soundCount = 0;
 
-  // Once the conductor system is connected to the editor,
-  // it will ping the target device to determine its current state.
-  // Scan the editor looking for identity blocks
+	// Once the conductor system is connected to the editor,
+	// it will ping the target device to determine its current state.
+	// Scan the editor looking for identity blocks
 
-  conductor.activeBits = [];
+	conductor.activeBits = [];
 
-  conductor.attachToScoreEditor = function (tbe) {
-    conductor.tbe = tbe;
-    conductor.linkHeartBeat();
-    conductor.cxn.connectionChanged.subscribe(conductor.updateIndentityBlocks);
-  };
+	conductor.attachToScoreEditor = function (tbe) {
+		conductor.tbe = tbe;
+		conductor.linkHeartBeat();
+		conductor.cxn.connectionChanged.subscribe(conductor.updateIndentityBlocks);
+	};
 
-  // If there is a change in connections update the indentity blocks
-  // TODO this linkage is very much a bit of a hack.
-  conductor.updateIndentityBlocks = function () {
-    var blockChainIterator = conductor.tbe.forEachDiagramChain;
-    blockChainIterator(function (chainStart) {
-      if (chainStart.name.startsWith('identity')) {
-        var botName = dso.deviceName;
-        var status = conductor.cxn.connectionStatus(botName);
-        if (status === conductor.cxn.statusEnum.BEACON) {
-          // Try to connect ot it.
-          conductor.cxn.connect(botName);
-        }
-        chainStart.updateSvg();
-      }
-    });
-  };
+	// If there is a change in connections update the indentity blocks
+	// TODO this linkage is very much a bit of a hack.
+	conductor.updateIndentityBlocks = function () {
+		var blockChainIterator = conductor.tbe.forEachDiagramChain;
+		blockChainIterator(function (chainStart) {
+			if (chainStart.name.startsWith('identity')) {
+				var botName = dso.deviceName;
+				var status = conductor.cxn.connectionStatus(botName);
+				if (status === conductor.cxn.statusEnum.BEACON) {
+					// Try to connect ot it.
+					conductor.cxn.connect(botName);
+				}
+				chainStart.updateSvg();
+			}
+		});
+	};
 
-  conductor.linkHeartBeat = function () {
-    var botName = dso.deviceName;
-    conductor.hbTimer = 0;
-    conductor.cxn.write(botName, '(m:(1 2) d:0);');
+	conductor.linkHeartBeat = function () {
+		var duration = 1000;
+		var botName = dso.deviceName;
+		conductor.hbTimer = 0;
+		conductor.cxn.write(botName, '(m:(1 2) d:0);');
 
-    // Set all of the blocks to a regular state.
-    conductor.tbe.forEachDiagramBlock(function (b) {
-      b.svgRect.classList.remove('running-block');
-    });
+		// Set all of the blocks to a regular state.
+		conductor.tbe.forEachDiagramBlock(function (b) {
+			b.svgRect.classList.remove('running-block');
+		});
 
-    if (conductor.runningBlocks.length > 0) {
-      for (var i = 0; i < conductor.runningBlocks.length; i++) {
-        var block = conductor.runningBlocks[i];
-        if (block !== null) {
-          if (conductor.loopCount === undefined && block.isLoopHead()) {
-            conductor.loopCount = block.controllerSettings.data.duration;
-          }
+		if (conductor.runningBlocks.length > 0) {
+			for (var i = 0; i < conductor.runningBlocks.length; i++) {
+				var block = conductor.runningBlocks[i];
+				if (block !== null) {
+					if (conductor.loopCount === undefined && block.isLoopHead()) {
+						conductor.loopCount = block.controllerSettings.data.duration;
+					}
 
-          if (block.name === 'tail' && conductor.loopCount > 1) {
-            block = block.flowHead;
-            conductor.loopCount -= 1;
-          } else if (block.name === 'tail' && conductor.loopCount === 1) {
-            conductor.loopCount = undefined;
-            if (block.next !== null) {
-              block = block.next;
-            } else {
-              conductor.stopAll();
-            }
-          }
+					if (block.name === 'tail' && conductor.loopCount > 1) {
+						block = block.flowHead;
+						conductor.loopCount -= 1;
+					} else if (block.name === 'tail' && conductor.loopCount === 1) {
+						conductor.loopCount = undefined;
+						if (block.next !== null) {
+							block = block.next;
+						} else {
+							conductor.stopAll();
+						}
+					}
 
-          if (block !== null && block.name === 'loop') {
-            block = block.next;
-          }
-          // If this is a new block, get its duration
-          if (block.count === null || block.count === undefined) {
-            block.count = block.controllerSettings.data.duration;
-          }
+					if (block !== null && block.name === 'loop') {
+						block = block.next;
+					}
 
-          // If it does not have a duration or it has a duration of 0
-          // then set its duration to 1
-          if (block.count === undefined || block.count === '0') {
-            block.count = 1;
-          }
+					// If this is a new block, get its duration
 
-          if (block !== null) {
-            block.count = parseInt(block.count, 10);
+					if (block.name === 'print') {
+						var x = conductor.getPrintVal(block.controllerSettings.data); //value
+						duration = x.toString().length * 1000; //digits * 1000
+					}
+					if (block.count === null || block.count === undefined) {
+						block.count = block.controllerSettings.data.duration;
 
-            // Mark the current block as running
-            var id = block.first;
-            if (id.name.startsWith('identity')) {
-              block.moveToFront();
-              block.svgRect.classList.add('running-block');
-            }
+						// if (block.name === 'print') {
+						// 	let x = conductor.getPrintVal(block.controllerSettings.data); //value
+						// 	block.count = x.toString().length; //digits
+						// } else {
+						// 	block.count = block.controllerSettings.data.duration;
+						// }
+					}
 
-            // If the block has not played for its entire duration,
-            // continue playing the block.
-            // Otherwise, get the next block ready and set count to null.
-            conductor.playOne(block);
-            if (block.count > 1) {
-              block.count -= 1;
-            } else {
-              conductor.runningBlocks[i] = block.next;
-              block.count = null;
-            }
-          }
-        }
-      }
-    }
-    conductor.hbTimer = setTimeout(function () {
-      conductor.linkHeartBeat();
-    }, 1000);
-  };
+					// If it does not have a duration or it has a duration of 0
+					// then set its duration to 1
+					if (block.count === undefined || block.count === '0') {
+						block.count = 1;
+					}
 
-  // Find all start all blocks and start them running.
-  conductor.playAll = function () {
-    dots.activate('play', 5);
-    conductor.runningBlocks = [];
-    conductor.run = true;
-    variables.resetVars();
-    var blockChainIterator = conductor.tbe.forEachDiagramChain;
-    blockChainIterator(function (chainStart) {
-      // Ignore chains that don't start with an identity block.
-      if (chainStart.name === 'identity') {
-        conductor.runningBlocks.push(chainStart.next);
-      } else if (chainStart.name === 'identityAccelerometer' || chainStart.name === 'identityButton' || chainStart.name === 'identityTemperature') {
-        //chainStart.controllerSettings.data.run = "yes";
-        cxn.buttonA = null;
-        cxn.buttonB = null;
-        cxn.buttonAB = null;
-        conductor.checkSensorIdentity(chainStart);
-      }
-    });
-  };
+					if (block !== null) {
+						block.count = parseInt(block.count, 10);
 
-  conductor.satisfiesStart = function (val, block, error) {
-    var blockValue = parseInt(block.controllerSettings.data.value, 10);
-    if (block.controllerSettings.data.comparison === '<') {
-      return val < blockValue;
-    } else if (block.controllerSettings.data.comparison === '>') {
-      return val > blockValue;
-    } else if (block.controllerSettings.data.comparison === '=') {
-      if (val === blockValue) {
-        return true;
-      } else if (val + error > blockValue && val - error < blockValue) {
-        return true;
-      }
-      return false;
-    }
-    return null;
-  };
+						// Mark the current block as running
+						var id = block.first;
+						if (id.name.startsWith('identity')) {
+							block.moveToFront();
+							block.svgRect.classList.add('running-block');
+						}
 
-  conductor.runningBlockIsNotInChain = function (block) {
-    while (block !== null) {
-      if (block.svgRect.classList.contains('running-block')) {
-        return false;
-      }
-      block = block.next;
-    }
-    return true;
-  };
+						// If the block has not played for its entire duration,
+						// continue playing the block.
+						// Otherwise, get the next block ready and set count to null.
+						conductor.playOne(block);
+						if (block.count > 1) {
+							block.count -= 1;
+						} else {
+							conductor.runningBlocks[i] = block.next;
+							block.count = null;
+						}
+					}
+				}
+			}
+		}
+		// if (block && block.name === 'print') {
+		// 	let x = conductor.getPrintVal(block.controllerSettings.data); //value
+		// 	let digits = x.toString().length;
+		// 	conductor.hbTimer = setTimeout(function() { conductor.linkHeartBeat(); }, digits*1000);
 
-  conductor.checkSensorIdentity = function (block) {
-    conductor.sensorTimer = 0;
-    var data = block.controllerSettings.data;
-    //conductor.cxn.write(dso.deviceName, '(sensor);');
-    if (conductor.run) {
-      if (block.name === 'identityAccelerometer' && cxn.accelerometer !== null) {
-        var accel = cxn.accelerometer;
-        console.log("Accelerometer", accel);
-        if (conductor.satisfiesStart(accel, block, 5) && conductor.runningBlockIsNotInChain(block)) {
-          conductor.runningBlocks.push(block.next);
-        }
-      } else if (block.name === 'identityTemperature' && cxn.temperature !== null) {
-        var temp = cxn.temperature;
-        console.log("Temperature", temp);
-        if (conductor.satisfiesStart(temp, block, 0)) {
-          conductor.runningBlocks.push(block.next);
-        }
-      } else if (block.name === 'identityButton') {
-        //console.log(data.button);
-        if (data.button === 'A' && cxn.buttonA) {
-          conductor.runningBlocks.push(block.next);
-          cxn.buttonA = null;
-        } else if (data.button === 'B' && cxn.buttonB) {
-          conductor.runningBlocks.push(block.next);
-          cxn.buttonB = null;
-        } else if (data.button === 'A+B' && cxn.buttonAB) {
-          conductor.runningBlocks.push(block.next);
-          cxn.buttonAB = null;
-        }
-      }
-    }
-    conductor.sensorTimer = setTimeout(function () {
-      conductor.checkSensorIdentity(block);
-    }, 50);
-  };
+		// 	// conductor.hbTimer = setTimeout(function() { conductor.linkHeartBeat(); }, 3000);
+		// } else {
+		conductor.hbTimer = setTimeout(function () {
+			conductor.linkHeartBeat();
+		}, duration);
+		// }
+	};
 
-  // Stop all running chains.
-  conductor.stopAll = function () {
-    dots.activate('play', 0);
-    var blockChainIterator = conductor.tbe.forEachDiagramChain;
-    var botName = '';
-    var message = '(m:(1 2) d:0);';
-    var message2 = '(px:' + conductor.defaultPix + ');';
-    conductor.run = false;
-    blockChainIterator(function (chainStart) {
-      chainStart.svgRect.classList.remove('running-block');
-      // Ignore chains that don't start with an identity block.
-      if (chainStart.name.startsWith('identity')) {
-        botName = dso.deviceName;
-        conductor.cxn.write(botName, message);
-        conductor.cxn.write(botName, message2);
-      }
-    });
-    conductor.count = null;
-    conductor.runningBlocks = [];
-    conductor.soundCount = 0;
-    log.trace('stop all');
-    // Single step, find target and head of chain, and run the single block.
-  };
+	// Find all start all blocks and start them running.
+	conductor.playAll = function () {
+		dots.activate('play', 5);
+		conductor.runningBlocks = [];
+		conductor.run = true;
+		variables.resetVars();
+		var blockChainIterator = conductor.tbe.forEachDiagramChain;
+		blockChainIterator(function (chainStart) {
+			// Ignore chains that don't start with an identity block.
+			if (chainStart.name === 'identity') {
+				conductor.runningBlocks.push(chainStart.next);
+			} else if (chainStart.name === 'identityAccelerometer' || chainStart.name === 'identityButton' || chainStart.name === 'identityTemperature') {
+				//chainStart.controllerSettings.data.run = "yes";
+				cxn.buttonA = null;
+				cxn.buttonB = null;
+				cxn.buttonAB = null;
+				conductor.checkSensorIdentity(chainStart);
+			}
+		});
+	};
 
-  conductor.playOne = function (block) {
-    var first = block.first;
+	conductor.satisfiesStart = function (val, block, error) {
+		var blockValue = parseInt(block.controllerSettings.data.value, 10);
+		if (block.controllerSettings.data.comparison === '<') {
+			return val < blockValue;
+		} else if (block.controllerSettings.data.comparison === '>') {
+			return val > blockValue;
+		} else if (block.controllerSettings.data.comparison === '=') {
+			if (val === blockValue) {
+				return true;
+			} else if (val + error > blockValue && val - error < blockValue) {
+				return true;
+			}
+			return false;
+		}
+		return null;
+	};
 
-    if (first.name.startsWith('identity')) {
-      var botName = dso.deviceName;
-      var message = '';
-      var d = block.controllerSettings.data;
-      if (block.name === 'picture') {
-        var imageData = d.pix;
-        var pixStr = conductor.packPix(imageData);
-        message = '(px:' + pixStr + ':' + 1 + ');';
-      } else if (block.name === 'servo') {
-        message = '(sr:' + 50 + ');';
-      } else if (block.name === 'motor') {
-        message = '(m:' + d.motor + ' d:' + -d.speed + ' b:' + d.duration + ');';
-      } else if (block.name === 'twoMotor') {
-        message = '(m:(1 2) d:' + -d.speed + ');'; // +' b:' + d.duration
-      } else if (block.name === 'sound') {
-        // pass the Solfege index
-        message = '(nt:' + d.s.split(" ")[conductor.soundCount] + ');';
-        if (conductor.soundCount === d.duration - 1) {
-          conductor.soundCount = 0;
-        } else {
-          conductor.soundCount += 1;
-        }
-        console.log('message', message);
-      } else if (block.name === 'wait') {
-        message = '';
-      } else if (block.name === 'variableSet') {
-        variables.set(d.variable, d.value);
-      } else if (block.name === 'variableAdd') {
-        // Decrement is done with negative numbers.
-        variables.func(d.variable, '+', d.value);
-      } else if (block.name === 'print') {
-        var val = conductor.getPrintVal(d);
-        message = '(pr:' + val + ');';
-      }
-      conductor.cxn.write(botName, message);
-    }
-    // variables.printVars();
-    // Single step, find target and head of chain and run the single block.
-  };
+	conductor.runningBlockIsNotInChain = function (block) {
+		while (block !== null) {
+			if (block.svgRect.classList.contains('running-block')) {
+				return false;
+			}
+			block = block.next;
+		}
+		return true;
+	};
 
-  conductor.getPrintVal = function (d) {
-    var val = 0;
-    if (d.print === 'var') {
-      console.log('var------');
-      val = variables.get(d.variable);
-    } else if (d.print === 'sensor') {
-      console.log('sensor------');
-      if (d.sensor === 'accelerometer') {
-        val = cxn.accelerometer;
-      } else if (d.sensor === 'temperature') {
-        val = cxn.temperature;
-      }
-    }
-    console.log('conductor print', d.print, d.variable, d.sensor, val);
-    return val;
-  };
+	conductor.checkSensorIdentity = function (block) {
+		conductor.sensorTimer = 0;
+		var data = block.controllerSettings.data;
+		//conductor.cxn.write(dso.deviceName, '(sensor);');
+		if (conductor.run) {
+			if (block.name === 'identityAccelerometer' && cxn.accelerometer !== null) {
+				var accel = cxn.accelerometer;
+				console.log("Accelerometer", accel);
+				if (conductor.satisfiesStart(accel, block, 5) && conductor.runningBlockIsNotInChain(block)) {
+					conductor.runningBlocks.push(block.next);
+				}
+			} else if (block.name === 'identityTemperature' && cxn.temperature !== null) {
+				var temp = cxn.temperature;
+				console.log("Temperature", temp);
+				if (conductor.satisfiesStart(temp, block, 0)) {
+					conductor.runningBlocks.push(block.next);
+				}
+			} else if (block.name === 'identityButton') {
+				//console.log(data.button);
+				if (data.button === 'A' && cxn.buttonA) {
+					conductor.runningBlocks.push(block.next);
+					cxn.buttonA = null;
+				} else if (data.button === 'B' && cxn.buttonB) {
+					conductor.runningBlocks.push(block.next);
+					cxn.buttonB = null;
+				} else if (data.button === 'A+B' && cxn.buttonAB) {
+					conductor.runningBlocks.push(block.next);
+					cxn.buttonAB = null;
+				}
+			}
+		}
+		conductor.sensorTimer = setTimeout(function () {
+			conductor.checkSensorIdentity(block);
+		}, 50);
+	};
 
-  conductor.playSingleChain = function () {
-    log.trace('play single chain');
-    // The conductor starts one chain (part of the score).
-  };
+	// Stop all running chains.
+	conductor.stopAll = function () {
+		dots.activate('play', 0);
+		var blockChainIterator = conductor.tbe.forEachDiagramChain;
+		var botName = '';
+		var message = '(m:(1 2) d:0);';
+		var message2 = '(px:' + conductor.defaultPix + ');';
+		conductor.run = false;
+		blockChainIterator(function (chainStart) {
+			chainStart.svgRect.classList.remove('running-block');
+			// Ignore chains that don't start with an identity block.
+			if (chainStart.name.startsWith('identity')) {
+				botName = dso.deviceName;
+				conductor.cxn.write(botName, message);
+				conductor.cxn.write(botName, message2);
+			}
+		});
+		conductor.count = null;
+		conductor.runningBlocks = [];
+		conductor.soundCount = 0;
+		log.trace('stop all');
+		// Single step, find target and head of chain, and run the single block.
+	};
 
-  conductor.packPix = function (imageData) {
-    var pixStr = '';
-    for (var i = 0; i < 5; i++) {
-      var value = 0;
-      for (var j = 0; j < 5; j++) {
-        value *= 2;
-        if (imageData[i * 5 + j] !== 0) {
-          value += 1;
-        }
-      }
-      var str = value.toString(16);
-      if (str.length === 1) {
-        str = '0' + str;
-      }
-      pixStr += str;
-    }
-    return pixStr;
-  };
-  return conductor;
+	conductor.playOne = function (block) {
+		var first = block.first;
+
+		if (first.name.startsWith('identity')) {
+			var botName = dso.deviceName;
+			var message = '';
+			var d = block.controllerSettings.data;
+			if (block.name === 'picture') {
+				var imageData = d.pix;
+				var pixStr = conductor.packPix(imageData);
+				message = '(px:' + pixStr + ':' + 1 + ');';
+			} else if (block.name === 'servo') {
+				message = '(sr:' + 50 + ');';
+			} else if (block.name === 'motor') {
+				message = '(m:' + d.motor + ' d:' + -d.speed + ' b:' + d.duration + ');';
+			} else if (block.name === 'twoMotor') {
+				message = '(m:(1 2) d:' + -d.speed + ');'; // +' b:' + d.duration
+			} else if (block.name === 'sound') {
+				// pass the Solfege index
+				message = '(nt:' + d.s.split(" ")[conductor.soundCount] + ');';
+				if (conductor.soundCount === d.duration - 1) {
+					conductor.soundCount = 0;
+				} else {
+					conductor.soundCount += 1;
+				}
+				console.log('message', message);
+			} else if (block.name === 'wait') {
+				message = '';
+			} else if (block.name === 'variableSet') {
+				variables.set(d.variable, d.value);
+			} else if (block.name === 'variableAdd') {
+				// Decrement is done with negative numbers.
+				variables.func(d.variable, '+', d.value);
+			} else if (block.name === 'print') {
+				var val = conductor.getPrintVal(d);
+				message = '(pr:' + val + ');';
+			}
+			conductor.cxn.write(botName, message);
+		}
+		// variables.printVars();
+		// Single step, find target and head of chain and run the single block.
+	};
+
+	conductor.getPrintVal = function (d) {
+		var val = 0;
+		if (d.print === 'var') {
+			console.log('var------');
+			val = variables.get(d.variable);
+		} else if (d.print === 'sensor') {
+			console.log('sensor------');
+			if (d.sensor === 'accelerometer') {
+				val = cxn.accelerometer;
+			} else if (d.sensor === 'temperature') {
+				val = cxn.temperature;
+			}
+		}
+		console.log('conductor print', d.print, d.variable, d.sensor, val);
+		return Math.trunc(val);
+	};
+
+	conductor.playSingleChain = function () {
+		log.trace('play single chain');
+		// The conductor starts one chain (part of the score).
+	};
+
+	conductor.packPix = function (imageData) {
+		var pixStr = '';
+		for (var i = 0; i < 5; i++) {
+			var value = 0;
+			for (var j = 0; j < 5; j++) {
+				value *= 2;
+				if (imageData[i * 5 + j] !== 0) {
+					value += 1;
+				}
+			}
+			var str = value.toString(16);
+			if (str.length === 1) {
+				str = '0' + str;
+			}
+			pixStr += str;
+		}
+		return pixStr;
+	};
+	return conductor;
 }();
 
 },{"./cxn.js":34,"./overlays/actionDots.js":38,"./overlays/deviceScanOverlay.js":41,"./variables.js":57,"log.js":53}],34:[function(require,module,exports){
@@ -10899,473 +10943,476 @@ SOFTWARE.
 
 // Module for managing BLE connections and lists of devices found.
 module.exports = function factory() {
-  var log = require('log.js');
-  var ko = require('knockout');
+	var log = require('log.js');
+	var ko = require('knockout');
 
-  var cxn = {};
-  cxn.connectionChanged = ko.observable({});
-  cxn.connectionChanged.extend({ notify: 'always' });
-  cxn.messages = [];
-  cxn.compass = 0;
-  cxn.temp = 0;
-  cxn.connectingTimeout = 0;
-  cxn.hostSelectedName = "";
-  cxn.calibrating = false;
-  cxn.calibrated = false;
+	var cxn = {};
+	cxn.connectionChanged = ko.observable({});
+	cxn.connectionChanged.extend({ notify: 'always' });
+	cxn.messages = [];
+	cxn.compass = 0;
+	cxn.temp = 0;
+	cxn.connectingTimeout = 0;
+	cxn.hostSelectedName = "";
+	cxn.calibrating = false;
+	cxn.calibrated = false;
+	cxn.botName = null;
+	cxn.accelerometer = null;
+	cxn.temperature = null;
+	cxn.buttonA = null;
+	cxn.buttonB = null;
+	cxn.buttonAB = null;
+	cxn.batteryPercent = 50;
+	// State enumeration for conections.
+	cxn.statusEnum = {
+		NOT_THERE: 0,
+		BEACON: 1,
+		CONNECTING: 2,
+		CONNECTED: 3,
+		CONNECTION_ERROR: 4
+	};
 
-  cxn.accelerometer = null;
-  cxn.temperature = null;
-  cxn.buttonA = null;
-  cxn.buttonB = null;
-  cxn.buttonAB = null;
-  cxn.batteryPercent = 50;
-  // State enumeration for conections.
-  cxn.statusEnum = {
-    NOT_THERE: 0,
-    BEACON: 1,
-    CONNECTING: 2,
-    CONNECTED: 3,
-    CONNECTION_ERROR: 4
-  };
+	// GUIDs for Nordic BLE UART services.
+	var nordicUARTservice = {
+		serviceUUID: '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
+		txCharacteristic: '6e400002-b5a3-f393-e0a9-e50e24dcca9e', // transmit is from the phone's perspective
+		rxCharacteristic: '6e400003-b5a3-f393-e0a9-e50e24dcca9e' // receive is from the phone's perspective
+	};
 
-  // GUIDs for Nordic BLE UART services.
-  var nordicUARTservice = {
-    serviceUUID: '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
-    txCharacteristic: '6e400002-b5a3-f393-e0a9-e50e24dcca9e', // transmit is from the phone's perspective
-    rxCharacteristic: '6e400003-b5a3-f393-e0a9-e50e24dcca9e' // receive is from the phone's perspective
-  };
+	cxn.webBLERead = null;
+	cxn.webBLEWrite = null;
 
-  cxn.webBLERead = null;
-  cxn.webBLEWrite = null;
+	// Convert a string to an array of int (int8s).
+	function stringToBuffer(str) {
+		var array = new Uint8Array(str.length);
+		for (var i = 0, l = str.length; i < l; i++) {
+			array[i] = str.charCodeAt(i);
+		}
+		return array.buffer;
+	}
 
-  // Convert a string to an array of int (int8s).
-  function stringToBuffer(str) {
-    var array = new Uint8Array(str.length);
-    for (var i = 0, l = str.length; i < l; i++) {
-      array[i] = str.charCodeAt(i);
-    }
-    return array.buffer;
-  }
+	// Convert an array ints to a string.
+	function bufferToString(buffer) {
+		return String.fromCharCode.apply(null, new Uint8Array(buffer));
+	}
 
-  // Convert an array ints to a string.
-  function bufferToString(buffer) {
-    return String.fromCharCode.apply(null, new Uint8Array(buffer));
-  }
+	// Sniff out which BLE API to use. The order of testing is important
+	if (typeof ble !== 'undefined') {
+		// First, look for a cordova based one. Its based on a global
+		cxn.appBLE = ble; // eslint-disable-line no-undef
+		cxn.webBLE = null;
+	} else if (navigator.bluetooth !== null && navigator.bluetooth !== undefined) {
+		// Second, see if ther appears to be a web bluetooth implmentation.
+		cxn.appBLE = null;
+		cxn.webBLE = navigator.bluetooth;
+	} else {
+		// None found.
+		cxn.appBLE = null;
+		cxn.webBLE = null;
+	}
 
-  // Sniff out which BLE API to use. The order of testing is important
-  if (typeof ble !== 'undefined') {
-    // First, look for a cordova based one. Its based on a global
-    cxn.appBLE = ble; // eslint-disable-line no-undef
-    cxn.webBLE = null;
-  } else if (navigator.bluetooth !== null && navigator.bluetooth !== undefined) {
-    // Second, see if ther appears to be a web bluetooth implmentation.
-    cxn.appBLE = null;
-    cxn.webBLE = navigator.bluetooth;
-  } else {
-    // None found.
-    cxn.appBLE = null;
-    cxn.webBLE = null;
-  }
+	// For WebBLE (others??) the UX needs to bring up the host's
+	// Scanning dialog.
+	cxn.scanUsesHostDialog = function () {
+		return cxn.webBLE !== null;
+	};
 
-  // For WebBLE (others??) the UX needs to bring up the host's
-  // Scanning dialog.
-  cxn.scanUsesHostDialog = function () {
-    return cxn.webBLE !== null;
-  };
+	cxn.devices = {};
+	cxn.scanning = false;
 
-  cxn.devices = {};
-  cxn.scanning = false;
+	cxn.stopScanning = function () {
+		log.trace('cxn.stopScanning');
+		cxn.scanning = false;
+		if (cxn.appBLE) {
+			cxn.appBLE.stopScan();
+		}
+	};
 
-  cxn.stopScanning = function () {
-    log.trace('cxn.stopScanning');
-    cxn.scanning = false;
-    if (cxn.appBLE) {
-      cxn.appBLE.stopScan();
-    }
-  };
+	cxn.findDeviceByMac = function (mac) {
+		for (var deviceName in cxn.devices) {
+			var device = cxn.devices[deviceName];
+			if (mac === device.mac) {
+				return device;
+			}
+		}
+		return null;
+	};
 
-  cxn.findDeviceByMac = function (mac) {
-    for (var deviceName in cxn.devices) {
-      var device = cxn.devices[deviceName];
-      if (mac === device.mac) {
-        return device;
-      }
-    }
-    return null;
-  };
+	// strip down the name to the core 5 character name
+	cxn.bleNameToBotName = function (rawName) {
+		if (rawName.startsWith('BBC micro:bit [')) {
+			return rawName.split('[', 2)[1].split(']', 1)[0];
+		} else {
+			return null;
+		}
+	};
 
-  // strip down the name to the core 5 character name
-  cxn.bleNameToBotName = function (rawName) {
-    if (rawName.startsWith('BBC micro:bit [')) {
-      return rawName.split('[', 2)[1].split(']', 1)[0];
-    } else {
-      return null;
-    }
-  };
+	// A Device has been seen.
+	cxn.beaconReceived = function (beaconInfo) {
+		if (beaconInfo.name !== undefined) {
+			var botName = cxn.bleNameToBotName(beaconInfo.name);
+			beaconInfo.botName = botName;
 
-  // A Device has been seen.
-  cxn.beaconReceived = function (beaconInfo) {
-    if (beaconInfo.name !== undefined) {
-      var botName = cxn.bleNameToBotName(beaconInfo.name);
-      beaconInfo.botName = botName;
+			// If its a legit name make sure it is in the list or devices.
+			if (botName !== null) {
 
-      // If its a legit name make sure it is in the list or devices.
-      if (botName !== null) {
+				// Merge into list
+				if (!this.devices.hasOwnProperty(botName)) {
+					this.devices[botName] = {
+						name: botName,
+						mac: beaconInfo.id
+					};
+					// Now set the status and trigger observers
+					cxn.setConnectionStatus(botName, cxn.statusEnum.BEACON);
+				}
 
-        // Merge into list
-        if (!this.devices.hasOwnProperty(botName)) {
-          this.devices[botName] = {
-            name: botName,
-            mac: beaconInfo.id
-          };
-          // Now set the status and trigger observers
-          cxn.setConnectionStatus(botName, cxn.statusEnum.BEACON);
-        }
+				// Update last-seen time stamp, signal strength
+				this.devices[botName].ts = Date.now();
+				if (Number.isInteger(beaconInfo.rssi)) {
+					this.devices[botName].rssi = beaconInfo.rssi;
+				}
+				this.cullList();
+			}
+		}
+	};
 
-        // Update last-seen time stamp, signal strength
-        this.devices[botName].ts = Date.now();
-        if (Number.isInteger(beaconInfo.rssi)) {
-          this.devices[botName].rssi = beaconInfo.rssi;
-        }
-        this.cullList();
-      }
-    }
-  };
+	cxn.cullList = function () {
+		var now = Date.now();
+		for (var botName in cxn.devices) {
+			var botInfo = cxn.devices[botName];
 
-  cxn.cullList = function () {
-    var now = Date.now();
-    for (var botName in cxn.devices) {
-      var botInfo = cxn.devices[botName];
+			// Per ECMAScript 5.1 standard section 12.6.4 it is OK to delete while
+			// iterating through a an object.
+			if (botInfo.status === cxn.statusEnum.BEACON && now - botInfo.ts > 4000) {
+				// log.trace('culling beacon thath has not been refreshed for a long while.');
+				delete cxn.devices[botName];
+			} else if (botInfo.status === cxn.statusEnum.NOT_THERE) {
+				// log.trace('culling missing bot');
+				delete cxn.devices[botName];
+			} else if (botInfo.status === cxn.statusEnum.CONNECTING) {
+				// If it is stuck in connecting then drop it.
+				// This is probably too quick. should do disconnect as well.
+				// log.trace('culling hung connection', cxn.connectingTimeout);
+				if (Date.now() - cxn.connectingStart > 10000) {
+					delete cxn.devices[botName];
+				}
+			}
+		}
 
-      // Per ECMAScript 5.1 standard section 12.6.4 it is OK to delete while
-      // iterating through a an object.
-      if (botInfo.status === cxn.statusEnum.BEACON && now - botInfo.ts > 4000) {
-        // log.trace('culling beacon thath has not been refreshed for a long while.');
-        delete cxn.devices[botName];
-      } else if (botInfo.status === cxn.statusEnum.NOT_THERE) {
-        // log.trace('culling missing bot');
-        delete cxn.devices[botName];
-      } else if (botInfo.status === cxn.statusEnum.CONNECTING) {
-        // If it is stuck in connecting then drop it.
-        // This is probably too quick. should do disconnect as well.
-        // log.trace('culling hung connection', cxn.connectingTimeout);
-        if (Date.now() - cxn.connectingStart > 10000) {
-          delete cxn.devices[botName];
-        }
-      }
-    }
+		// Let observers know something about the list of devices has changed.
+		cxn.connectionChanged(cxn.devices);
+	};
 
-    // Let observers know something about the list of devices has changed.
-    cxn.connectionChanged(cxn.devices);
-  };
+	cxn.isBLESupported = function () {
+		if (cxn.webBLE) {
+			return true;
+		} else if (cxn.appBLE && cxn.appBLE.isEnabled) {
+			return true;
+		} else {
+			return false;
+		}
+	};
 
-  cxn.isBLESupported = function () {
-    if (cxn.webBLE) {
-      return true;
-    } else if (cxn.appBLE && cxn.appBLE.isEnabled) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+	cxn.startScanning = function () {
+		cxn.connectingStart = Date.now(); // a bit of a hack
+		cxn.scanning = true;
 
-  cxn.startScanning = function () {
-    cxn.connectingStart = Date.now(); // a bit of a hack
-    cxn.scanning = true;
+		if (cxn.webBLE) {
+			cxn.webBTConnect();
+		} else if (cxn.appBLE) {
 
-    if (cxn.webBLE) {
-      cxn.webBTConnect();
-    } else if (cxn.appBLE) {
+			cxn.appBLE.isEnabled(function () {
+				console.log("Bluetooth is enabled");
+			}, function () {
+				console.log("Bluetooth is *not* enabled");
+			});
 
-      cxn.appBLE.isEnabled(function () {
-        console.log("Bluetooth is enabled");
-      }, function () {
-        console.log("Bluetooth is *not* enabled");
-      });
+			//cxn.appBLE.enable();
+			log.trace('appBLE:' + cxn.scanning);
+			cxn.appBLE.startScanWithOptions([], { reportDuplicates: true }, function (beaconInfo) {
+				cxn.beaconReceived(beaconInfo);
+			}, function (errorCode) {
+				log.trace('error1:' + errorCode);
+			});
+		} else {
+			// bleAPI is not null looks like cordova model.
+			log.trace('Bluetooth not supported in this context');
+		}
+	};
 
-      //cxn.appBLE.enable();
-      log.trace('appBLE:' + cxn.scanning);
-      cxn.appBLE.startScanWithOptions([], { reportDuplicates: true }, function (beaconInfo) {
-        cxn.beaconReceived(beaconInfo);
-      }, function (errorCode) {
-        log.trace('error1:' + errorCode);
-      });
-    } else {
-      // bleAPI is not null looks like cordova model.
-      log.trace('Bluetooth not supported in this context');
-    }
-  };
+	// For Web bluetooth use the promises style of chaining callbacks.
+	// It looks a bit like one function, but it is a chain of 'then'
+	// call backs
+	cxn.webBTConnect = function () {
 
-  // For Web bluetooth use the promises style of chaining callbacks.
-  // It looks a bit like one function, but it is a chain of 'then'
-  // call backs
-  cxn.webBTConnect = function () {
+		var options = {
+			filters: [
+			// The GATT filter filters out micro:bits on chrome books (6/1/2019) why??
+			// {services: ['generic_attribute']},
+			{ namePrefix: 'BBC micro:bit' }],
+			optionalServices: [nordicUARTservice.serviceUUID, 'link_loss']
+		};
 
-    var options = {
-      filters: [
-      // The GATT filter filters out micro:bits on chrome books (6/1/2019) why??
-      // {services: ['generic_attribute']},
-      { namePrefix: 'BBC micro:bit' }],
-      optionalServices: [nordicUARTservice.serviceUUID, 'link_loss']
-    };
+		// requestDevice will trigger a browse dialog once back to the browser loop.
+		// When a user selects one the 'then()' is called. Since the user has already
+		// selected on at that point, add it to the list and select.
+		navigator.bluetooth.requestDevice(options).then(function (device) {
+			// Called once device selected by user - no connection made yet
+			log.trace('> device:', device);
+			var beaconInfo = {
+				name: device.name, // Should be in 'BBC micro:bit [xxxxx]' format
+				id: device.id, // looks like a hast of mac id perhaps
+				rssi: -1, // signal strength is not shared with JS code
+				autoSelect: true // indicate that the app should now connect.
+			};
+			cxn.beaconReceived(beaconInfo);
+			device.addEventListener('gattserverdisconnected', cxn.onDisconnecWebBLE);
+			cxn.setConnectionStatus(beaconInfo.botName, cxn.statusEnum.CONNECTING);
+			return device.gatt.connect();
+		}).then(function (server) {
+			// Called once gatt.connect() finishes
+			log.trace('> GATT connected:', server);
+			return server.getPrimaryService(nordicUARTservice.serviceUUID);
+		}).then(function (primaryService) {
+			// Called once nordicUARTservice is found.
+			log.trace('> Nordic UART service connected:', primaryService);
+			// Calling getCharacteristics with no parameters
+			// should return the one associated with the primary service
+			// ( the tx and rx service)
+			return primaryService.getCharacteristics();
+		}).then(function (characteristics) {
+			var rawName = characteristics[0].service.device.name;
+			log.trace('> UART characteristics:', rawName, characteristics);
+			var botName = cxn.bleNameToBotName(rawName);
+			cxn.scanning = false;
+			cxn.setConnectionStatus(botName, cxn.statusEnum.CONNECTED);
 
-    // requestDevice will trigger a browse dialog once back to the browser loop.
-    // When a user selects one the 'then()' is called. Since the user has already
-    // selected on at that point, add it to the list and select.
-    navigator.bluetooth.requestDevice(options).then(function (device) {
-      // Called once device selected by user - no connection made yet
-      log.trace('> device:', device);
-      var beaconInfo = {
-        name: device.name, // Should be in 'BBC micro:bit [xxxxx]' format
-        id: device.id, // looks like a hast of mac id perhaps
-        rssi: -1, // signal strength is not shared with JS code
-        autoSelect: true // indicate that the app should now connect.
-      };
-      cxn.beaconReceived(beaconInfo);
-      device.addEventListener('gattserverdisconnected', cxn.onDisconnecWebBLE);
-      cxn.setConnectionStatus(beaconInfo.botName, cxn.statusEnum.CONNECTING);
-      return device.gatt.connect();
-    }).then(function (server) {
-      // Called once gatt.connect() finishes
-      log.trace('> GATT connected:', server);
-      return server.getPrimaryService(nordicUARTservice.serviceUUID);
-    }).then(function (primaryService) {
-      // Called once nordicUARTservice is found.
-      log.trace('> Nordic UART service connected:', primaryService);
-      // Calling getCharacteristics with no parameters
-      // should return the one associated with the primary service
-      // ( the tx and rx service)
-      return primaryService.getCharacteristics();
-    }).then(function (characteristics) {
-      var rawName = characteristics[0].service.device.name;
-      log.trace('> UART characteristics:', rawName, characteristics);
-      var botName = cxn.bleNameToBotName(rawName);
-      cxn.scanning = false;
-      cxn.setConnectionStatus(botName, cxn.statusEnum.CONNECTED);
+			if (characteristics.length >= 2) {
+				var c0 = characteristics[0];
+				var c1 = characteristics[1];
+				if (c0.uuid === nordicUARTservice.txCharacteristic) {
+					cxn.webBLEWrite = c0;
+				} else if (c1.uuid === nordicUARTservice.txCharacteristic) {
+					cxn.webBLEWrite = c1;
+				}
+				if (c0.uuid === nordicUARTservice.rxCharacteristic) {
+					cxn.webBLERead = c0;
+				} else if (c1.uuid === nordicUARTservice.rxCharacteristic) {
+					cxn.webBLERead = c1;
+				}
+			}
+			cxn.webBLERead.startNotifications().then(function () {
+				log.trace('adding event listener');
+				cxn.webBLERead.addEventListener('characteristicvaluechanged', cxn.onValChange);
+			});
+		}).catch(function (error) {
+			cxn.scanning = false;
+			cxn.connectionChanged(cxn.devices);
+			// User canceled the picker.
+			//log.trace('cancel or error :' + error);
+		});
+	};
 
-      if (characteristics.length >= 2) {
-        var c0 = characteristics[0];
-        var c1 = characteristics[1];
-        if (c0.uuid === nordicUARTservice.txCharacteristic) {
-          cxn.webBLEWrite = c0;
-        } else if (c1.uuid === nordicUARTservice.txCharacteristic) {
-          cxn.webBLEWrite = c1;
-        }
-        if (c0.uuid === nordicUARTservice.rxCharacteristic) {
-          cxn.webBLERead = c0;
-        } else if (c1.uuid === nordicUARTservice.rxCharacteristic) {
-          cxn.webBLERead = c1;
-        }
-      }
-      cxn.webBLERead.startNotifications().then(function () {
-        log.trace('adding event listener');
-        cxn.webBLERead.addEventListener('characteristicvaluechanged', cxn.onValChange);
-      });
-    }).catch(function (error) {
-      cxn.scanning = false;
-      cxn.connectionChanged(cxn.devices);
-      // User canceled the picker.
-      //log.trace('cancel or error :' + error);
-    });
-  };
+	cxn.onDisconnectAppBLE = function (info) {
+		log.trace('onDisconnectAppBLE:', info);
+		var botName = cxn.bleNameToBotName(info.name);
+		cxn.setConnectionStatus(botName, cxn.statusEnum.NOT_THERE);
+		cxn.cullList();
+		cxn.versionNumber = null;
+		cxn.calibrated = false;
+	};
 
-  cxn.onDisconnectAppBLE = function (info) {
-    log.trace('onDisconnectAppBLE:', info);
-    var botName = cxn.bleNameToBotName(info.name);
-    cxn.setConnectionStatus(botName, cxn.statusEnum.NOT_THERE);
-    cxn.cullList();
-    cxn.versionNumber = null;
-    cxn.calibrated = false;
-  };
+	cxn.onDisconnecWebBLE = function (event) {
+		log.trace('onDisconnecWebBLE:', event.target.name);
+		var botName = cxn.bleNameToBotName(event.target.name);
+		cxn.setConnectionStatus(botName, cxn.statusEnum.NOT_THERE);
+		cxn.cullList();
+		cxn.versionNumber = null;
+		cxn.calibrated = false;
+	};
 
-  cxn.onDisconnecWebBLE = function (event) {
-    log.trace('onDisconnecWebBLE:', event.target.name);
-    var botName = cxn.bleNameToBotName(event.target.name);
-    cxn.setConnectionStatus(botName, cxn.statusEnum.NOT_THERE);
-    cxn.cullList();
-    cxn.versionNumber = null;
-    cxn.calibrated = false;
-  };
+	// Determine the status of a named connection.
+	cxn.connectionStatus = function (name) {
+		try {
+			if (cxn.devices.hasOwnProperty(name)) {
+				return cxn.devices[name].status;
+			} else {
+				return cxn.statusEnum.NOT_THERE;
+			}
+		} catch (error) {
+			log.trace('execption in BLE onData', error);
+			return 0;
+		}
+	};
 
-  // Determine the status of a named connection.
-  cxn.connectionStatus = function (name) {
-    try {
-      if (cxn.devices.hasOwnProperty(name)) {
-        return cxn.devices[name].status;
-      } else {
-        return cxn.statusEnum.NOT_THERE;
-      }
-    } catch (error) {
-      log.trace('execption in BLE onData', error);
-      return 0;
-    }
-  };
+	// Change a devices status and trigger observers
+	cxn.setConnectionStatus = function (name, status) {
+		var dev = cxn.devices[name];
+		if (dev !== null) {
+			dev.status = status;
+		}
+		// Trigger notifications.
+		cxn.connectionChanged(cxn.devices);
+	};
 
-  // Change a devices status and trigger observers
-  cxn.setConnectionStatus = function (name, status) {
-    var dev = cxn.devices[name];
-    if (dev !== null) {
-      dev.status = status;
-    }
-    // Trigger notifications.
-    cxn.connectionChanged(cxn.devices);
-  };
+	cxn.disconnectAll = function () {
+		if (cxn.appBLE) {
+			for (var deviceName in cxn.devices) {
+				var mac = cxn.devices[deviceName].mac;
+				cxn.appBLE.disconnect(mac);
+				cxn.setConnectionStatus(deviceName, cxn.statusEnum.NOT_THERE);
+			}
+			//    cxn.cullList();
+		} else {
+			// More to do here once multiple connectios allowed.
+			if (cxn.webBLEWrite !== null) {
+				var dev = cxn.webBLEWrite.service.device;
+				if (dev.gatt.connected) {
+					dev.gatt.disconnect();
+				}
+				cxn.webBLEWrite = null;
+				cxn.webBLERead = null;
+			}
+		}
+	};
 
-  cxn.disconnectAll = function () {
-    if (cxn.appBLE) {
-      for (var deviceName in cxn.devices) {
-        var mac = cxn.devices[deviceName].mac;
-        cxn.appBLE.disconnect(mac);
-        cxn.setConnectionStatus(deviceName, cxn.statusEnum.NOT_THERE);
-      }
-      //    cxn.cullList();
-    } else {
-      // More to do here once multiple connectios allowed.
-      if (cxn.webBLEWrite !== null) {
-        var dev = cxn.webBLEWrite.service.device;
-        if (dev.gatt.connected) {
-          dev.gatt.disconnect();
-        }
-        cxn.webBLEWrite = null;
-        cxn.webBLERead = null;
-      }
-    }
-  };
+	cxn.disconnect = function (name) {
+		if (cxn.appBLE) {
+			var mac = cxn.devices[name].mac;
+			console.log('disconnecting appble', mac);
+			cxn.appBLE.disconnect(mac);
+			cxn.setConnectionStatus(name, cxn.statusEnum.NOT_THERE);
+			cxn.cullList();
+		} else if (cxn.webBLE) {
+			// Not really set up to manage multiple connections.
+			// So there is only one, disconect it.
+			cxn.disconnectAll();
+		}
+	};
 
-  cxn.disconnect = function (name) {
-    if (cxn.appBLE) {
-      var mac = cxn.devices[name].mac;
-      console.log('disconnecting appble', mac);
-      cxn.appBLE.disconnect(mac);
-      cxn.setConnectionStatus(name, cxn.statusEnum.NOT_THERE);
-      cxn.cullList();
-    } else if (cxn.webBLE) {
-      // Not really set up to manage multiple connections.
-      // So there is only one, disconect it.
-      cxn.disconnectAll();
-    }
-  };
+	cxn.connect = function (name) {
+		console.log('cns.connect', name, cxn.devices);
+		cxn.connectingStart = Date.now();
+		if (cxn.devices.hasOwnProperty(name)) {
+			var mac = cxn.devices[name].mac;
+			console.log('cns.connect', name, mac);
+			if (cxn.appBLE) {
+				console.log('cns.connect is app BLE');
+				cxn.setConnectionStatus(name, cxn.statusEnum.CONNECTING);
+				cxn.appBLE.connect(mac, cxn.onConnectAppBLE, cxn.onDisconnectAppBLE, cxn.onError);
+			} else if (cxn.webBLE) {
+				// Should already be connected.
+				// TODO, no the connection can be postponed until needed (perhaps)
+			} else {
+				// For no BLE present, pretend the device is connected.
+				cxn.setConnectionStatus(name, cxn.statusEnum.CONNECTED);
+			}
+		}
+	};
 
-  cxn.connect = function (name) {
-    console.log('cns.connect', name, cxn.devices);
-    cxn.connectingStart = Date.now();
-    if (cxn.devices.hasOwnProperty(name)) {
-      var mac = cxn.devices[name].mac;
-      console.log('cns.connect', name, mac);
-      if (cxn.appBLE) {
-        console.log('cns.connect is app BLE');
-        cxn.setConnectionStatus(name, cxn.statusEnum.CONNECTING);
-        cxn.appBLE.connect(mac, cxn.onConnectAppBLE, cxn.onDisconnectAppBLE, cxn.onError);
-      } else if (cxn.webBLE) {
-        // Should already be connected.
-        // TODO, no the connection can be postponed until needed (perhaps)
-      } else {
-        // For no BLE present, pretend the device is connected.
-        cxn.setConnectionStatus(name, cxn.statusEnum.CONNECTED);
-      }
-    }
-  };
+	cxn.onConnectAppBLE = function (info) {
+		log.trace('On Connected:', info.name);
+		// If connection works, then start listening for incomming messages.
+		cxn.appBLE.startNotification(info.id, nordicUARTservice.serviceUUID, nordicUARTservice.rxCharacteristic, function (data) {
+			cxn.onData(info.name, data);
+		}, cxn.onError);
 
-  cxn.onConnectAppBLE = function (info) {
-    log.trace('On Connected:', info.name);
-    // If connection works, then start listening for incomming messages.
-    cxn.appBLE.startNotification(info.id, nordicUARTservice.serviceUUID, nordicUARTservice.rxCharacteristic, function (data) {
-      cxn.onData(info.name, data);
-    }, cxn.onError);
+		var dev = cxn.findDeviceByMac(info.id);
+		if (dev !== null) {
+			cxn.setConnectionStatus(dev.name, cxn.statusEnum.CONNECTED);
+		}
+	};
 
-    var dev = cxn.findDeviceByMac(info.id);
-    if (dev !== null) {
-      cxn.setConnectionStatus(dev.name, cxn.statusEnum.CONNECTED);
-    }
-  };
+	cxn.onData = function (name, data) {
+		try {
+			// (A T B G)
+			var str = bufferToString(data);
+			//  log.trace('On Data:', name, str);
+			cxn.messages.push(name + ':' + str);
+			if (str.includes('ac') || str.includes('accel')) {
+				var accelData = str.includes('ac') ? str.substring(4, str.length - 1) : str.substring(7, str.length - 1);
+				cxn.accelerometer = parseInt(accelData, 10) / 20;
+			} else if (str.includes('(a)')) {
+				cxn.buttonA = true;
+			} else if (str.includes('(b)')) {
+				cxn.buttonB = true;
+			} else if (str.includes('(ab)')) {
+				cxn.buttonAB = true;
+			} else if (str.includes('compass')) {
+				cxn.compass = str.substring(9, str.length - 2);
+			} else if (str.includes('tp') || str.includes('temp')) {
+				var tempData = str.includes('tp') ? str.substring(4, str.length - 1) : str.substring(6, str.length - 1);
+				var fData = 1.8 * parseInt(tempData, 10) + 32;
+				cxn.temperature = fData;
+			} else if (str.includes('vs')) {
+				cxn.versionNumber = str.substring(4, str.length - 1);
+				console.log('version number:', cxn.versionNumber);
+				if (cxn.botName) {
+					cxn.write(cxn.botName, '(vr)');
+				}
+			} else if (str.includes('bt')) {
+				cxn.batteryPercent = str.substring(4, str.length - 1);
+			} else if (str.includes('cs')) {
+				cxn.calibrating = true;
+			} else if (str.includes('cf')) {
+				cxn.calibrating = false;
+				cxn.calibrated = true;
+			}
+		} catch (error) {
+			log.trace('execption in BLE onData', error);
+		}
+	};
 
-  cxn.onData = function (name, data) {
-    try {
-      // (A T B G)
-      var str = bufferToString(data);
-      //  log.trace('On Data:', name, str);
-      cxn.messages.push(name + ':' + str);
-      if (str.includes('ac') || str.includes('accel')) {
-        var accelData = str.includes('ac') ? str.substring(4, str.length - 1) : str.substring(7, str.length - 1);
-        cxn.accelerometer = parseInt(accelData, 10) / 20;
-      } else if (str.includes('(a)')) {
-        cxn.buttonA = true;
-      } else if (str.includes('(b)')) {
-        cxn.buttonB = true;
-      } else if (str.includes('(ab)')) {
-        cxn.buttonAB = true;
-      } else if (str.includes('compass')) {
-        cxn.compass = str.substring(9, str.length - 2);
-      } else if (str.includes('tp') || str.includes('temp')) {
-        var tempData = str.includes('tp') ? str.substring(4, str.length - 1) : str.substring(6, str.length - 1);
-        var fData = 1.8 * parseInt(tempData, 10) + 32;
-        cxn.temperature = fData;
-      } else if (str.includes('vs')) {
-        cxn.versionNumber = str.substring(4, str.length - 1);
-        console.log('version number:', cxn.versionNumber);
-      } else if (str.includes('bt')) {
-        cxn.batteryPercent = str.substring(4, str.length - 1);
-      } else if (str.includes('cs')) {
-        cxn.calibrating = true;
-      } else if (str.includes('cf')) {
-        cxn.calibrating = false;
-        cxn.calibrated = true;
-      }
-    } catch (error) {
-      log.trace('execption in BLE onData', error);
-    }
-  };
+	cxn.onValChange = function (event) {
+		var value = event.target.value;
+		//log.trace('BLE message recieved', str);
+		cxn.onData('Received', value.buffer);
+	};
 
-  cxn.onValChange = function (event) {
-    var value = event.target.value;
-    //log.trace('BLE message recieved', str);
-    cxn.onData('Received', value.buffer);
-  };
+	cxn.onError = function (reason) {
+		log.trace('Error2:', reason);
+	};
 
-  cxn.onError = function (reason) {
-    log.trace('Error2:', reason);
-  };
+	cxn.write = function (name, message) {
+		if (!cxn.calibrating) {
+			//console.log(cxn.calibrating);
+			try {
+				if (cxn.devices.hasOwnProperty(name)) {
+					var mac = cxn.devices[name].mac;
+					var buffer = stringToBuffer(message);
 
-  cxn.write = function (name, message) {
-    if (!cxn.calibrating) {
-      //console.log(cxn.calibrating);
-      try {
-        if (cxn.devices.hasOwnProperty(name)) {
-          var mac = cxn.devices[name].mac;
-          var buffer = stringToBuffer(message);
+					if (cxn.appBLE) {
+						buffer = stringToBuffer(message);
 
-          if (cxn.appBLE) {
-            buffer = stringToBuffer(message);
+						// Break the message into smaller sections.
+						cxn.appBLE.write(mac, nordicUARTservice.serviceUUID, nordicUARTservice.txCharacteristic, buffer, cxn.onWriteOK, cxn.onWriteFail);
+					} else if (cxn.webBLE) {
+						if (cxn.webBLEWrite) {
+							cxn.webBLEWrite.writeValue(buffer).then(function () {
 
-            // Break the message into smaller sections.
-            cxn.appBLE.write(mac, nordicUARTservice.serviceUUID, nordicUARTservice.txCharacteristic, buffer, cxn.onWriteOK, cxn.onWriteFail);
-          } else if (cxn.webBLE) {
-            if (cxn.webBLEWrite) {
-              cxn.webBLEWrite.writeValue(buffer).then(function () {
+								//log.trace('write succeded', message);
+							}).catch(function () {
+								//log.trace('write failed', message, error);
+								setTimeout(cxn.write(name, message), 50);
+							});
+						}
+						//var cxn.webBLEWrite = null;
+					}
+				}
+			} catch (error) {
+				log.trace('execption in BLE Write', error);
+			}
+		}
+	};
 
-                //log.trace('write succeded', message);
-              }).catch(function () {
-                //log.trace('write failed', message, error);
-                setTimeout(cxn.write(name, message), 50);
-              });
-            }
-            //var cxn.webBLEWrite = null;
-          }
-        }
-      } catch (error) {
-        log.trace('execption in BLE Write', error);
-      }
-    }
-  };
+	cxn.onWriteOK = function (data) {
+		log.trace('write ok', data);
+	};
+	cxn.onWriteFail = function (data) {
+		log.trace('write fail', data);
+	};
 
-  cxn.onWriteOK = function (data) {
-    log.trace('write ok', data);
-  };
-  cxn.onWriteFail = function (data) {
-    log.trace('write fail', data);
-  };
-
-  return cxn;
+	return cxn;
 }();
 
 },{"knockout":9,"log.js":53}],35:[function(require,module,exports){
@@ -11599,15 +11646,7 @@ if (!app.isRegularBrowser) {
 	var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 	if (isMobile) {
 		// Build the HTML for mobile overlay without animation
-		overlays.insertHTML('\n\t\t\t<div id=\'mobileOverlay\'>\n\t\t\t\t<div id=\'mobileDialog\'>\n\t\t\t\t<h1 style = "text-align:center">You are on a mobile Device</h1>\n\t\t\t\t\t<div style = "text-align:center;">\n\t\t\t\t\t\tConsider using our mobile app instead: <a href = "https://tblocks.app.link">TBlocks</a>\n\t\t\t\t\t</div>\n\t\t\t\t\t<br>\n\t\t\t\t\t<br>\n\t\t\t\t\t<div style = "text-align:center;">\n\t\t\t\t\t\tOr continue with <a href = \'#\' id="regularWebsite">our website</a>.\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>');
-		var regularWebsite = document.getElementById("regularWebsite");
-		regularWebsite.onclick = function () {
-			overlays.currentIsClosing = true;
-			document.getElementById("mobileOverlay").style.display = "none";
-			overlays.overlayShell.classList.add('fullScreenSlideOut');
-			app.isCordovaApp = false;
-			app.start();
-		};
+		overlays.insertHTML('\n\t\t\t<div id=\'mobileOverlay\'>\n\t\t\t\t<div id=\'mobileDialog\'>\n\t\t\t\t<h1 style = "text-align:center">You are on a mobile Device</h1>\n\t\t\t\t\t<div style = "text-align:center;">\n\t\t\t\t\t\tConsider using our mobile app: <a href = "https://tblocks.app.link">TBlocks</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>');
 	} else {
 		app.isCordovaApp = false;
 		app.start();
@@ -12342,6 +12381,11 @@ module.exports = function () {
       dso.actualNameLabel.innerHTML = dso.deviceName;
     } else {
       dso.deviceNameLabel.innerHTML = fastr.robot + ' ' + dso.deviceName;
+    }
+    if (dso.deviceName !== dso.nonName) {
+      cxn.botName = dso.deviceName;
+    } else {
+      cxn.botName = null;
     }
     //console.log(dso.deviceNameLabel.innerHTML)
   };
@@ -13185,1545 +13229,1554 @@ SOFTWARE.
 
 module.exports = function () {
 
-  var log = require('log.js');
-  var assert = require('assert');
-  var interact = require('interact.js');
-  var teakText = require('./teaktext.js');
-  var svgb = require('svgbuilder.js');
-  var icons = require('icons.js');
-  var trashBlocks = require('./trashBlocks.js');
-  var fblocks = require('./fblock-settings.js');
-  var teakselection = require('./teakselection');
-  var actionDots = require('./overlays/actionDots.js');
-  var conductor = require('./conductor.js');
-  var app = require('./appMain.js');
+	var log = require('log.js');
+	var assert = require('assert');
+	var interact = require('interact.js');
+	var teakText = require('./teaktext.js');
+	var svgb = require('svgbuilder.js');
+	var icons = require('icons.js');
+	var trashBlocks = require('./trashBlocks.js');
+	var fblocks = require('./fblock-settings.js');
+	var teakselection = require('./teakselection');
+	var actionDots = require('./overlays/actionDots.js');
+	var conductor = require('./conductor.js');
+	var app = require('./appMain.js');
 
-  var tbe = {};
+	var tbe = {};
 
-  tbe.fblocks = fblocks;
-  tbe.diagramBlocks = {};
-  tbe.paletteBlocks = {};
-  tbe.blockIdSequence = 100;
-  tbe.currentDoc = 'docA';
-  tbe.currentUndoIndex = 0;
-  tbe.stopUndo = false;
-  tbe.draggingSelectionArea = null;
-  tbe.defaultBlockLoc = [40, 120];
-  tbe.identityIndent = 120;
+	tbe.fblocks = fblocks;
+	tbe.diagramBlocks = {};
+	tbe.paletteBlocks = {};
+	tbe.blockIdSequence = 100;
+	tbe.currentDoc = 'docA';
+	tbe.currentUndoIndex = 0;
+	tbe.stopUndo = false;
+	tbe.draggingSelectionArea = null;
+	tbe.defaultBlockLoc = [40, 120];
+	tbe.identityIndent = 120;
 
-  // Visitor for each block in the diagram
-  tbe.forEachDiagramBlock = function (callBack) {
-    for (var key in tbe.diagramBlocks) {
-      if (tbe.diagramBlocks.hasOwnProperty(key)) {
-        var block = tbe.diagramBlocks[key];
-        if ((typeof block === 'undefined' ? 'undefined' : _typeof(block)) === 'object') {
-          callBack(block);
-        }
-      }
+	// Visitor for each block in the diagram
+	tbe.forEachDiagramBlock = function (callBack) {
+		for (var key in tbe.diagramBlocks) {
+			if (tbe.diagramBlocks.hasOwnProperty(key)) {
+				var block = tbe.diagramBlocks[key];
+				if ((typeof block === 'undefined' ? 'undefined' : _typeof(block)) === 'object') {
+					callBack(block);
+				}
+			}
+		}
+	};
+
+	// Visitor for each block in the palette
+	tbe.forEachPalette = function (callBack) {
+		for (var key in tbe.paletteBlocks) {
+			if (tbe.paletteBlocks.hasOwnProperty(key)) {
+				var block = tbe.paletteBlocks[key];
+				if ((typeof block === 'undefined' ? 'undefined' : _typeof(block)) === 'object') {
+					callBack(block);
+				}
+			}
+		}
+	};
+
+	// Visitor that finds the head of each chain.
+	tbe.forEachDiagramChain = function (callBack) {
+		tbe.forEachDiagramBlock(function (block) {
+			if (block.prev === null) {
+				callBack(block);
+			}
+		});
+	};
+
+	// Clear any semi modal state
+	tbe.clearStates = function clearStates(block) {
+		// Clear any showing forms or multi step state.
+		// If the user has interacted with a general part of the editor.
+		actionDots.reset();
+		app.overlays.hideOverlay(null);
+		this.components.blockSettings.hide(block);
+		tbe.forEachDiagramBlock(function (b) {
+			b.markSelected(false);
+		});
+	};
+
+	tbe.init = function init(svg, ceiling) {
+		this.width = window.innerWidth;
+		this.height = window.innerHeight;
+		this.svg = svg;
+		this.svgCeiling = ceiling;
+		this.background = svgb.createRect('editor-background', 0, 0, 20, 20, 0);
+		this.svg.insertBefore(this.background, this.svgCeiling);
+		this.configInteractions();
+		interact.maxInteractions(Infinity);
+
+		teakselection.init(tbe);
+
+		return this;
+	};
+
+	tbe.elementToBlock = function (el) {
+		var text = el.getAttribute('interact-id');
+		if (text === null) {
+			log.trace('svg elt had no id:', el);
+			return null;
+		}
+		var values = text.split(':');
+		var obj = null;
+		if (values[0] === 'd') {
+			obj = this.diagramBlocks[text];
+		} else if (values[0] === 'p') {
+			obj = this.paletteBlocks[text];
+		}
+		if (obj === undefined) {
+			obj = null;
+		}
+		if (obj === null) {
+			log.trace('block not found, id was <', text, '>');
+		}
+		return obj;
+	};
+
+	tbe.clearAllBlocks = function () {
+		tbe.clearStates();
+		trashBlocks(tbe);
+	};
+
+	tbe.saveCurrentDoc = function () {
+		var currentDocText = teakText.blocksToText(tbe.forEachDiagramChain);
+		app.storage.setItem(tbe.currentDoc, currentDocText);
+	};
+
+	tbe.loadDoc = function (docName) {
+		// If they are actully switching then load the new one.
+		if (tbe.currentDoc !== docName) {
+			tbe.clearStates();
+			tbe.clearDiagramBlocks();
+			tbe.currentDoc = docName;
+			var loadedDocText = app.storage.getItem(docName);
+			if (loadedDocText !== null) {
+				teakText.textToBlocks(tbe, loadedDocText);
+			}
+			actionDots.setDocTitle(docName.substring(3, 4));
+		}
+	};
+
+	tbe.nextBlockId = function (prefix) {
+		var blockId = prefix + String(tbe.blockIdSequence);
+		tbe.blockIdSequence += 1;
+		return blockId;
+	};
+
+	tbe.addBlock = function (x, y, name) {
+		var block = new this.FunctionBlock(x, y, name);
+		block.isPaletteBlock = false;
+		block.interactId = tbe.nextBlockId('d:');
+		this.diagramBlocks[block.interactId] = block;
+		return block;
+	};
+
+	tbe.addPaletteBlock = function (x, y, name, pgroup) {
+		var block = new this.FunctionBlock(x, y, name);
+		block.pgroup = pgroup;
+		block.isPaletteBlock = true;
+		block.interactId = tbe.nextBlockId('p:');
+		this.paletteBlocks[block.interactId] = block;
+
+		// Looks like blocks are added to main editor, so it is removed
+		// then added to the palette. Odd...
+		tbe.svg.removeChild(block.svgGroup);
+		if (block.rect.right + 30 > tbe.width) {
+			block.svgGroup.setAttribute('class', 'drag-group hiddenPaletteBlock');
+		}
+		tbe.tabGroups[pgroup].appendChild(block.svgGroup);
+
+		return block;
+	};
+
+	// Delete a chunk of blocks (typically one).
+	tbe.deleteChunk = function (block, endBlock) {
+
+		// Remember any tail so it can be slid over.
+		var tail = endBlock.next;
+		var head = block.prev;
+
+		// Disconnect the chunk from its surroundings.
+		if (head !== null) {
+			head.next = tail;
+		}
+		if (tail !== null) {
+			tail.prev = head;
+		}
+		block.prev = null;
+		endBlock.next = null;
+
+		// Now that the chunk has been disconnected, measure it.
+		var deleteWidth = block.chainWidth;
+		var tempBlock = null;
+
+		if (block.flowTail === endBlock && !block.isGroupSelected()) {
+			tbe.clearStates();
+			if (block.prev !== null) {
+				block.next.prev = block.prev;
+			} else {
+				block.next.prev = null;
+			}
+			block.next = null;
+
+			if (endBlock.next !== null) {
+				endBlock.prev.next = endBlock.next;
+			} else {
+				endBlock.prev.next = null;
+			}
+			endBlock.prev = null;
+
+			delete tbe.diagramBlocks[block.interactId];
+
+			tbe.svg.removeChild(block.svgGroup);
+			block.svgGroup = null;
+			block.svgRect = null;
+			block.next = null;
+			block.prev = null;
+
+			delete tbe.diagramBlocks[endBlock.interactId];
+
+			tbe.svg.removeChild(endBlock.svgGroup);
+			endBlock.svgGroup = null;
+			endBlock.svgRect = null;
+			endBlock.next = null;
+			endBlock.prev = null;
+		} else {
+			// Delete the chunk.
+			tbe.clearStates();
+
+			while (block !== null) {
+				tempBlock = block.next; // Make a copy of block.next before it becomes null
+				// Remove map entry for the block.
+				delete tbe.diagramBlocks[block.interactId];
+
+				tbe.svg.removeChild(block.svgGroup);
+				block.svgGroup = null;
+				block.svgRect = null;
+				block.next = null;
+				block.prev = null;
+
+				block = tempBlock;
+			}
+		}
+
+		// Slide any remaining blocks over to the left.
+		// The links have already been fixed.
+		if (tail !== null) {
+			tbe.animateMove(tail, tail.last, -deleteWidth, 0, 10);
+		}
+	};
+
+	tbe.deleteBlock = function () {};
+
+	// Copy a chunk or the rest of the chain, and return the copy.
+	// The section specified should not have links to parts outside.
+	tbe.replicateChunk = function (chain, endBlock, offsetX, offsetY) {
+
+		this.clearStates(); //???
+
+		var stopPoint = null;
+		if (endBlock !== undefined && endBlock !== null) {
+			// This might be null as well.
+			stopPoint = endBlock.next;
+		}
+
+		var newChain = null;
+		var newBlock = null;
+		var b = null;
+
+		// Copy the chain of blocks and set the newBlock field.
+		b = chain;
+		while (b !== stopPoint) {
+			newBlock = new this.FunctionBlock(b.left + offsetX, b.top + offsetY, b.name);
+			b.newBlock = newBlock;
+			if (newChain === null) {
+				newChain = newBlock;
+			}
+
+			// TODO can params and controller settings be combined?
+			//newBlock.params = JSON.parse(JSON.stringify(b.params));
+			newBlock.controllerSettings = JSON.parse(JSON.stringify(b.controllerSettings));
+			newBlock.isPaletteBlock = false;
+			newBlock.interactId = tbe.nextBlockId('d:');
+			this.diagramBlocks[newBlock.interactId] = newBlock;
+			b = b.next;
+		}
+		// Fix up pointers in the new chain.
+		b = chain;
+		while (b !== stopPoint) {
+			newBlock = b.newBlock;
+			newBlock.next = b.mapToNewBlock(b.next);
+			newBlock.prev = b.mapToNewBlock(b.prev);
+			newBlock.flowHead = b.mapToNewBlock(b.flowHead);
+			newBlock.flowTail = b.mapToNewBlock(b.flowTail);
+			b = b.next;
+		}
+		// Clear out the newBlock field, and fix up svg as needed.
+		b = chain;
+		while (b !== stopPoint) {
+			var temp = b.newBlock;
+			b.newBlock = null;
+			b = b.next;
+			temp.fixupChainCrossBlockSvg();
+		}
+
+		// Update images in the new chain.
+		b = newChain;
+		while (b !== null) {
+			b.updateSvg();
+			b = b.next;
+		}
+
+		// Return pointer to head of new chain.
+		return newChain;
+	};
+
+	//------------------------------------------------------------------------------
+	// FunctionBlock -- Constructor for FunctionBlock object.
+	//
+	//      *-- svgGroup
+	//        |
+	//        *--- custom graphics for bloc (clear to pointer)
+	//        |
+	//        *--- svgRect framing rec common to all blocks
+	//        |
+	//        *--- [svgCrossBlock] option behind block region graphics
+	//
+	tbe.FunctionBlock = function FunctionBlock(x, y, blockName) {
+
+		// Connect the generic block class to the behavior definition class.
+		this.name = blockName;
+		this.funcs = fblocks.bind(blockName);
+		if (typeof this.funcs.defaultSettings === 'function') {
+			this.controllerSettings = this.funcs.defaultSettings();
+		} else {
+			this.controllerSettings = { controller: 'none', data: 4 };
+		}
+
+		// Place holder for sequencing links.
+		this.prev = null;
+		this.next = null;
+		this.flowHead = null;
+		this.flowTail = null;
+
+		// Blocks at the top level have a nesting of 0.
+		this.nesting = 0;
+		this.newBlock = null;
+
+		// Dragging state information.
+		this.dragging = false;
+		this.snapTarget = null; // Object to append, prepend, replace
+		this.snapOpen = { // Object for snapping to the grid
+			top: null,
+			left: null
+		};
+		this.snapAction = null; // append, prepend, replace, ...
+		this.targetShadow = null; // Svg element to hilite target location
+
+		// Create the actual SVG object.
+		// It's a group of two pieces:
+		// a rounded rect and a group that holds the custom graphics for the block.
+		var width = this.controllerSettings.width;
+		if (width === undefined) {
+			width = 70;
+		}
+		this.rect = {
+			left: 0,
+			top: 0,
+			right: width,
+			bottom: 80
+		};
+		this.svgGroup = svgb.createGroup('drag-group', 0, 0);
+		if (blockName.startsWith('identity')) {
+			this.svgRect = icons.paletteBlockIdentity(1, 'function-block identity-block', 0, 0, width);
+		} else {
+			this.svgRect = icons.paletteBlock(1, 'function-block', 0, 0, this);
+		}
+		this.svgGroup.appendChild(this.svgRect);
+		this.svgCustomGroup = null; // see updateSvg()
+		this.updateSvg();
+
+		// Position block, relative to its initial location at (0, 0).
+		this.dmove(x, y, true);
+
+		// Add block to the editor tree. This makes it visible.
+		this.moveToFront();
+	};
+
+	tbe.FunctionBlock.prototype.isStartBlock = function () {
+		// This works for now.
+		return this.name.startsWith('identity');
+	};
+
+	// Create an image for the block base on its type.
+	tbe.FunctionBlock.prototype.updateSvg = function () {
+
+		// Remove the old custom image if they exist.
+		if (this.svgCustomGroup !== null) {
+			this.svgGroup.removeChild(this.svgCustomGroup);
+		}
+
+		// Build custom image for this block.
+		this.svgCustomGroup = svgb.createGroup('', 0, 0);
+		if (typeof this.funcs.svg === 'function') {
+			this.funcs.svg(this.svgCustomGroup, this);
+		}
+
+		// Add it to doc's SVG tree.
+		this.svgGroup.appendChild(this.svgCustomGroup);
+	};
+
+	// Checks if block passed in is in the same chain as this.
+	tbe.FunctionBlock.prototype.chainContainsBlock = function (other) {
+		// Block is the first block of the chain.
+		var block = this.first;
+		// Go through the whole chain and look for if any blocks same as other.
+		while (block !== null) {
+			// If a similarity is found, return true.
+			if (block === other) {
+				return true;
+			}
+			block = block.next;
+		}
+		// If no blocks that were the same were found, return false.
+		return false;
+	};
+
+	tbe.FunctionBlock.prototype.refreshNesting = function () {
+		var nesting = 0;
+		var b = this.first;
+		while (b !== null) {
+			if (b.flowTail !== null) {
+				b.nesting = nesting;
+				nesting += 1;
+			} else if (b.flowHead !== null) {
+				nesting -= 1;
+				b.nesting = nesting;
+			} else {
+				b.nesting = nesting;
+			}
+			b = b.next;
+		}
+	};
+
+	// Scan down the chain and allow any block that has cross block graphics
+	// to update them.
+	tbe.FunctionBlock.prototype.fixupChainCrossBlockSvg = function () {
+		// TODO, only refresh nesting when the links actually change.
+		// no need to do it during each animation step.
+		this.refreshNesting();
+		var b = this;
+		while (b !== null) {
+			if (typeof b.funcs.crossBlockSvg === 'function') {
+				b.funcs.crossBlockSvg(b);
+			}
+			b = b.next;
+		}
+	};
+
+	Object.defineProperty(tbe.FunctionBlock.prototype, 'first', {
+		get: function get() {
+			var block = this;
+			while (block.prev !== null) {
+				block = block.prev;
+			}
+			return block;
+		}
+	});
+
+	Object.defineProperty(tbe.FunctionBlock.prototype, 'last', {
+		get: function get() {
+			var block = this;
+			while (block.next !== null) {
+				block = block.next;
+			}
+			return block;
+		}
+	});
+
+	Object.defineProperty(tbe.FunctionBlock.prototype, 'chainWidth', {
+		get: function get() {
+			var block = this;
+			var width = 0;
+			while (block !== null) {
+				width += block.rect.right - block.rect.left;
+				block = block.next;
+			}
+			return width;
+		}
+	});
+
+	Object.defineProperty(tbe.FunctionBlock.prototype, 'top', {
+		get: function get() {
+			return this.rect.top;
+		}
+	});
+
+	Object.defineProperty(tbe.FunctionBlock.prototype, 'left', {
+		get: function get() {
+			return this.rect.left;
+		}
+	});
+
+	Object.defineProperty(tbe.FunctionBlock.prototype, 'bottom', {
+		get: function get() {
+			return this.rect.bottom;
+		}
+	});
+
+	Object.defineProperty(tbe.FunctionBlock.prototype, 'right', {
+		get: function get() {
+			return this.rect.right;
+		}
+	});
+
+	Object.defineProperty(tbe.FunctionBlock.prototype, 'width', {
+		get: function get() {
+			return this.rect.right - this.rect.left;
+		}
+	});
+
+	Object.defineProperty(tbe.FunctionBlock.prototype, 'height', {
+		get: function get() {
+			return this.rect.bottom - this.rect.top;
+		}
+	});
+
+	// Example of an object property added with defineProperty with an accessor property descriptor
+	Object.defineProperty(tbe.FunctionBlock.prototype, 'interactId', {
+		get: function get() {
+			return this.svgRect.getAttribute('interact-id');
+		},
+		set: function set(id) {
+			this.svgGroup.setAttribute('interact-id', id);
+			this.svgRect.setAttribute('interact-id', id);
+		}
+	});
+
+	// mapToNewBlock -- uUed by replicateChunk to fix up pointers in a
+	// copied chain.
+	tbe.FunctionBlock.prototype.mapToNewBlock = function (object) {
+		if (object === undefined || object === null) {
+			return null;
+		} else {
+			return object.newBlock;
+		}
+	};
+
+	// Mark all block in the chain starting with 'this' block as being dragged.
+	// Disconnect from the previous part of the chain.
+	tbe.FunctionBlock.prototype.setDraggingState = function (state) {
+		// If this block is in a chain, disconnect it from blocks in front.
+		if (state && this.prev !== null) {
+			this.prev.next = null;
+			this.prev = null;
+		}
+		// Set the state of all blocks down the chain.
+		var block = this;
+		while (block !== null) {
+			block.dragging = state;
+			// block.hilite(state);
+			block = block.next;
+		}
+	};
+
+	tbe.FunctionBlock.prototype.moveToFront = function () {
+		// TODO moving to the front interrupts (prevents) the animations.
+		//tbe.svg.removeChild(this.svgGroup);
+		tbe.svg.insertBefore(this.svgGroup, tbe.svgCeiling);
+	};
+
+	tbe.FunctionBlock.prototype.markSelected = function (state) {
+		if (state) {
+			this.moveToFront();
+			this.svgRect.classList.add('selected-block');
+			if (this.flowHead !== null) {
+				this.flowHead.svgRect.classList.add('selected-block');
+			}
+			if (this.flowTail !== null) {
+				this.flowTail.svgRect.classList.add('selected-block');
+			}
+		} else {
+			this.svgRect.classList.remove('selected-block');
+		}
+	};
+
+	tbe.FunctionBlock.prototype.isSelected = function () {
+		return this.svgRect.classList.contains('selected-block');
+	};
+
+	// For a selected block find the last in the selected set.
+	tbe.FunctionBlock.prototype.selectionEnd = function () {
+		var block = this;
+		while (block.next !== null && block.next.isSelected()) {
+			block = block.next;
+		}
+		return block;
+	};
+
+	tbe.FunctionBlock.prototype.isLoopHead = function () {
+		return this.flowTail !== null;
+	};
+
+	tbe.FunctionBlock.prototype.isLoopTail = function () {
+		return this.flowHead !== null;
+	};
+
+	tbe.FunctionBlock.prototype.isCommented = function () {
+		return this.svgRect.classList.contains('commented');
+	};
+
+	tbe.FunctionBlock.prototype.isIdentity = function () {
+		return this.name.includes('identity');
+	};
+
+	// Checks if a selected loop is the only thing selected.
+	tbe.FunctionBlock.prototype.isIsolatedLoop = function () {
+		if (this.isLoopHead() && this.isSelected()) {
+			if (this.prev !== null && this.prev.isSelected()) {
+				return false;
+			} else if (this.flowTail.next !== null && this.flowTail.next.isSelected()) {
+				return false;
+			} else if (this.next !== this.flowTail && this.next.isSelected()) {
+				return false;
+			}
+		}
+		if (this.isLoopTail() && this.isSelected()) {
+			if (this.next !== null && this.next.isSelected()) {
+				return false;
+			} else if (this.flowHead.prev !== null && this.flowHead.prev.isSelected()) {
+				return false;
+			} else if (this.prev !== this.flowHead && this.prev.isSelected()) {
+				return false;
+			}
+		}
+		if (!this.isLoopHead() && !this.isLoopTail()) {
+			return false;
+		}
+		if (!this.isSelected()) {
+			return false;
+		}
+		return true;
+	};
+
+	// Determine if the block is part of selection that is more than one block
+	tbe.FunctionBlock.prototype.isGroupSelected = function () {
+		var before = false;
+		var after = false;
+		if (this.next !== null) {
+			before = this.next.isSelected();
+		}
+		if (this.prev !== null) {
+			after = this.prev.isSelected();
+		}
+		return this.isSelected() && (before || after);
+	};
+
+	tbe.FunctionBlock.prototype.isOnScreen = function () {
+		if (this.rect !== null) {
+			if (this.rect.left + this.width >= 0 && this.rect.right - this.width <= tbe.width) {
+				if (this.rect.top + this.height >= 0 && this.rect.bottom - this.height <= tbe.height) {
+					return true;
+				}
+			}
+		}
+		return false;
+	};
+
+	// Change the element class to trigger CSS changes.
+	tbe.FunctionBlock.prototype.hilite = function (state) {
+		// TODO looks like there is more than one bring to front
+		// unify the function and give it a better name.
+		if (state) {
+			// Bring highlighted block to top. Blocks don't normally
+			// overlap, so Z plane is not important. But blocks that are
+			// being dragged need to float above ones on the diagram.
+			this.moveToFront();
+		}
+	};
+
+	// Move a section of a chain by a delta (x, y) (from this to endBlock)
+	tbe.FunctionBlock.prototype.dmove = function (dx, dy, snapToInt, endBlock) {
+		var block = this;
+		if (endBlock === undefined) {
+			endBlock = null;
+		}
+
+		while (block !== null) {
+			var r = block.rect;
+			r.left += dx;
+			r.top += dy;
+			r.right += dx;
+			r.bottom += dy;
+			if (snapToInt) {
+				// Final locations are forced to integers for clean serialization.
+				r.top = Math.round(r.top);
+				r.left = Math.round(r.left);
+				r.bottom = Math.round(r.bottom);
+				r.right = Math.round(r.right);
+			}
+
+			if (block.svgGroup) {
+				svgb.translateXY(block.svgGroup, r.left, r.top);
+			}
+
+			if (block === endBlock) {
+				break;
+			}
+			block = block.next;
+		}
+	};
+
+	//------------------------------------------------------------------------------
+	// Calculate the intersecting area of two rectangles.
+	tbe.intersectingArea = function intersectingArea(r1, r2) {
+		var x = Math.min(r1.right, r2.right) - Math.max(r1.left, r2.left);
+		if (x < 0) return 0;
+		var y = Math.min(r1.bottom, r2.bottom) - Math.max(r1.top, r2.top);
+		if (y < 0) {
+			return 0;
+		}
+		return x * y;
+	};
+
+	tbe.FunctionBlock.prototype.hilitePossibleTarget = function () {
+		var self = this;
+		var target = null;
+		var overlap = 0;
+		var bestOverlap = 0;
+		var action = null;
+		var rect = null;
+		var thisWidth = this.width;
+
+		// Look at every diagram block taking into consideration
+		// whether or not it is in the chain.
+		tbe.forEachDiagramBlock(function (entry) {
+			if (entry !== self && !entry.dragging) {
+				rect = {
+					top: entry.top,
+					bottom: entry.bottom,
+					left: entry.left - thisWidth * 0.5,
+					right: entry.right - thisWidth * 0.5
+				};
+				if (entry.prev === null) {
+					// For left edge, increase gravity field
+					rect.left -= thisWidth * 0.5;
+				}
+				if (entry.next === null) {
+					// For right edge, increase gravity field
+					rect.right += thisWidth * 1.5;
+				}
+
+				overlap = tbe.intersectingArea(self.rect, rect);
+				if (overlap > bestOverlap) {
+					bestOverlap = overlap;
+					target = entry;
+				}
+			}
+		});
+
+		// Refine the action based on geometery.
+		if (target !== null) {
+			if (self.left <= target.left) {
+				if (target.prev !== null) {
+					if (!self.isStartBlock()) {
+						action = 'insert';
+					}
+				} else {
+					if (!target.isStartBlock()) {
+						action = 'prepend';
+					}
+				}
+			} else if (!self.name.includes('identity')) {
+				action = 'append';
+			}
+		}
+
+		var shadowX = null;
+		var shadowY = null;
+		var gridsize = 40;
+
+		if (action === null) {
+			action = 'outsnap';
+			if (target !== null) {
+				var diff = target.rect.bottom - this.rect.top;
+				shadowX = Math.round((this.rect.top + diff) / gridsize) * gridsize;
+				shadowY = Math.round(this.rect.left / gridsize) * gridsize;
+				target = null;
+			}
+		}
+
+		if (shadowX === null && shadowY === null) {
+			shadowX = Math.round(this.rect.top / gridsize) * gridsize;
+			shadowY = Math.round(this.rect.left / gridsize) * gridsize;
+		}
+
+		// Update shadows as needed.
+		if (this.snapTarget !== target || this.snapAction !== action) {
+			if (this.snapTarget !== null) {
+				this.removeTargetShadows();
+			}
+			this.snapTarget = target;
+			this.snapAction = action;
+			if (target !== null) {
+				this.insertTargetShadows(target, action);
+			}
+		} else if (action === 'outsnap' && (this.snapOpen.top !== shadowX || this.snapOpen.left !== shadowY || this.snapAction !== action)) {
+			this.removeTargetShadows();
+			this.snapAction = action;
+			this.snapOpen = {
+				top: shadowX,
+				left: shadowY
+			};
+
+			this.insertTargetShadows(this.snapOpen, action);
+		}
+		return target;
+	};
+
+	// Show the shadow blocks to indicate where the blocks will end up if placed
+	// in the current location.
+	tbe.FunctionBlock.prototype.insertTargetShadows = function (target, action) {
+		var block = this;
+		var y = target.top;
+		var x = 0;
+		if (action === 'prepend') {
+			x = target.left - this.chainWidth;
+		} else if (action === 'insert') {
+			// The shadows will be covered up, and not going to move the
+			// down stream blocks until the move is committed.
+			// so offset them a bit.
+			// TODO show above OR based on where dragging blocks are coming from.
+			x = target.left - 20;
+			y -= 25;
+		} else if (action === 'append') {
+			x = target.right;
+		} else if (action === 'outsnap') {
+			var gridsize = 40;
+			x = gridsize * Math.round(this.rect.left / gridsize);
+			y = gridsize * Math.round(this.rect.top / gridsize);
+		} else {
+			return;
+		}
+		var shadow = null;
+		while (block !== null) {
+			if (action === 'outsnap') {
+				shadow = icons.paletteBlock(1, 'shadow-block shadow-block-outsnap', x, y, block); //svgb.createRect('shadow-block shadow-block-outsnap', x, y, block.width, block.height, 10);
+			} else {
+				shadow = icons.paletteBlock(1, 'shadow-block', x, y, block); //svgb.createRect('shadow-block', x, y, block.width, block.height, 10);
+			}
+			tbe.svg.insertBefore(shadow, tbe.background.nextSibling);
+
+			block.targetShadow = shadow;
+			x += block.width;
+			block = block.next;
+		}
+	};
+
+	tbe.FunctionBlock.prototype.removeTargetShadows = function () {
+		var block = this;
+		var shadowsToRemove = [];
+		while (block !== null) {
+			var shadow = block.targetShadow;
+			if (shadow !== null) {
+				shadowsToRemove.push(shadow);
+				if (block.snapAction === 'outsnap') {
+					shadow.setAttribute('class', 'shadow-block-leave shadow-block-leave-outsnap');
+				} else {
+					shadow.setAttribute('class', 'shadow-block-leave');
+				}
+				block.targetShadow = null;
+			}
+			block = block.next;
+		}
+		// Give some time for the animation to complete, then remove.
+		setTimeout(function () {
+			shadowsToRemove.forEach(function (elt) {
+				if (elt.parentNode !== null) {
+					tbe.svg.removeChild(elt);
+				}
+			});
+		}, 1000);
+		var shadows = document.getElementsByClassName('shadow-block');
+		for (var i = shadows.length - 1; i >= 0; i--) {
+			shadows[i].parentNode.removeChild(shadows[i]);
+		}
+	};
+
+	tbe.FunctionBlock.prototype.moveToPossibleTarget = function () {
+		var thisLast = this.last;
+		var targx = 0;
+		var dx = 0;
+		var dy = 0;
+		assert(this.prev === null, 'err1');
+		assert(thisLast.next === null, 'err2');
+
+		if (this.snapTarget !== null) {
+			// TODO:assert that chain we have has clean prev/next links
+			// Append/Prepend the block(chain) to the list
+			if (this.snapAction === 'prepend') {
+				assert(this.snapTarget.prev === null, 'err3');
+				targx = this.snapTarget.left - this.chainWidth;
+				thisLast.next = this.snapTarget;
+				this.snapTarget.prev = thisLast;
+			} else if (this.snapAction === 'append') {
+				assert(this.snapTarget.next === null, 'err4');
+				targx = this.snapTarget.right;
+				this.prev = this.snapTarget;
+				this.snapTarget.next = this;
+				// slide down post blocks if insert
+				// logically here, in annimation bellow
+			} else if (this.snapAction === 'insert') {
+				assert(this.snapTarget.prev !== null, 'err5');
+				targx = this.snapTarget.left;
+				// Determin space needed for new segment
+				// before its spliced in.
+				var width = this.chainWidth;
+
+				thisLast.next = this.snapTarget;
+				this.prev = this.snapTarget.prev;
+				this.snapTarget.prev.next = this;
+				this.snapTarget.prev = thisLast;
+
+				// Set up animation to slide down old blocks.
+				tbe.animateMove(this.snapTarget, this.snapTarget.last, width, 0, 10);
+			}
+
+			// Set up an animation to move the dragging blocks to new location.
+			dx = targx - this.left;
+			dy = this.snapTarget.top - this.top;
+			// The model snaps directly to the target location
+			// but the view eases to it.
+			tbe.animateMove(this, thisLast, dx, dy, 10);
+		} else if (this.snapOpen !== null) {
+			dx = Math.round(this.snapOpen.left - this.rect.left);
+			dy = Math.round(this.snapOpen.top - this.rect.top);
+			tbe.animateMove(this, thisLast, dx, dy, 10);
+		} else {
+			// Nothing to snap to so leave it where is ended up.
+			// still need sound though
+			// tbe.audio.drop.play();
+		}
+		this.hilite(false);
+		this.snapTarget = null;
+		this.snapAction = null;
+		this.snapOpen = {
+			top: null,
+			left: null
+		};
+	};
+
+	// animateMove -- move a chunk of block to its new location. The prev and next
+	// links should already be set up for the final location.
+	tbe.animateMove = function (firstBlock, lastBlock, dx, dy, frames) {
+		var state = {
+			frame: frames,
+			adx: dx / frames,
+			ady: dy / frames,
+			chunkStart: firstBlock,
+			chunkEnd: lastBlock
+		};
+		tbe.animateMoveCore(state);
+	};
+
+	tbe.animateMoveCore = function (state) {
+		var frame = state.frame;
+		state.chunkStart.dmove(state.adx, state.ady, frame === 1, state.chunkEnd);
+		state.chunkStart.fixupChainCrossBlockSvg();
+		if (frame > 1) {
+			state.frame = frame - 1;
+			requestAnimationFrame(function () {
+				tbe.animateMoveCore(state);
+			});
+		} else {
+			// Once animation is over shadows are covered, remove them.
+			tbe.audio.playSound(tbe.audio.shortClick);
+			state.chunkStart.removeTargetShadows();
+		}
+	};
+
+	tbe.clearDiagramBlocks = function clearDiagramBlocks() {
+		tbe.internalClearDiagramBlocks();
+	};
+	tbe.internalClearDiagramBlocks = function clearDiagramBlocks() {
+		tbe.forEachDiagramBlock(function (block) {
+			tbe.svg.removeChild(block.svgGroup);
+			block.svgGroup = null;
+			block.svgCustomGroup = null;
+			block.svgRect = null;
+			block.next = null;
+			block.prev = null;
+		});
+		tbe.diagramBlocks = {};
+	};
+
+	// Find a selected block on the diragram. There should only
+	// be one set of blocks selected.
+	tbe.findSelectedChunk = function findSelectedChunk() {
+		var selected = null;
+		tbe.forEachDiagramBlock(function (block) {
+			if (selected === null && block.isSelected()) {
+				selected = block;
+			}
+		});
+		return selected;
+	};
+
+	// Starting at a block that was clicked on find the logical range that
+	// should be selected, typically that is the selected block to the end.
+	// But for flow blocks it more subtle.
+	tbe.findChunkStart = function findChunkStart(clickedBlock) {
+		var chunkStart = clickedBlock;
+		while (chunkStart.isSelected()) {
+			if (chunkStart.prev !== null && chunkStart.prev.isSelected()) {
+				chunkStart = chunkStart.prev;
+			} else {
+				break;
+			}
+		}
+		// Scan to end see if a flow tail is found.
+		/*var b = chunkStart;
+  while (b !== null) {
+    // If tail found inlcude the whole flow block.
+    if (b.flowHead !== null) {
+  	chunkStart = b.flowHead;
     }
-  };
-
-  // Visitor for each block in the palette
-  tbe.forEachPalette = function (callBack) {
-    for (var key in tbe.paletteBlocks) {
-      if (tbe.paletteBlocks.hasOwnProperty(key)) {
-        var block = tbe.paletteBlocks[key];
-        if ((typeof block === 'undefined' ? 'undefined' : _typeof(block)) === 'object') {
-          callBack(block);
-        }
-      }
+    // If at the top its a clean place to break the chain.
+    if (b.nesting === 0) {
+  	break;
     }
-  };
-
-  // Visitor that finds the head of each chain.
-  tbe.forEachDiagramChain = function (callBack) {
-    tbe.forEachDiagramBlock(function (block) {
-      if (block.prev === null) {
-        callBack(block);
-      }
-    });
-  };
-
-  // Clear any semi modal state
-  tbe.clearStates = function clearStates(block) {
-    // Clear any showing forms or multi step state.
-    // If the user has interacted with a general part of the editor.
-    actionDots.reset();
-    app.overlays.hideOverlay(null);
-    this.components.blockSettings.hide(block);
-    tbe.forEachDiagramBlock(function (b) {
-      b.markSelected(false);
-    });
-  };
-
-  tbe.init = function init(svg, ceiling) {
-    this.width = window.innerWidth;
-    this.height = window.innerHeight;
-    this.svg = svg;
-    this.svgCeiling = ceiling;
-    this.background = svgb.createRect('editor-background', 0, 0, 20, 20, 0);
-    this.svg.insertBefore(this.background, this.svgCeiling);
-    this.configInteractions();
-    interact.maxInteractions(Infinity);
-
-    teakselection.init(tbe);
-
-    return this;
-  };
-
-  tbe.elementToBlock = function (el) {
-    var text = el.getAttribute('interact-id');
-    if (text === null) {
-      log.trace('svg elt had no id:', el);
-      return null;
-    }
-    var values = text.split(':');
-    var obj = null;
-    if (values[0] === 'd') {
-      obj = this.diagramBlocks[text];
-    } else if (values[0] === 'p') {
-      obj = this.paletteBlocks[text];
-    }
-    if (obj === undefined) {
-      obj = null;
-    }
-    if (obj === null) {
-      log.trace('block not found, id was <', text, '>');
-    }
-    return obj;
-  };
-
-  tbe.clearAllBlocks = function () {
-    tbe.clearStates();
-    trashBlocks(tbe);
-  };
-
-  tbe.saveCurrentDoc = function () {
-    var currentDocText = teakText.blocksToText(tbe.forEachDiagramChain);
-    app.storage.setItem(tbe.currentDoc, currentDocText);
-  };
-
-  tbe.loadDoc = function (docName) {
-    // If they are actully switching then load the new one.
-    if (tbe.currentDoc !== docName) {
-      tbe.clearStates();
-      tbe.clearDiagramBlocks();
-      tbe.currentDoc = docName;
-      var loadedDocText = app.storage.getItem(docName);
-      if (loadedDocText !== null) {
-        teakText.textToBlocks(tbe, loadedDocText);
-      }
-      actionDots.setDocTitle(docName.substring(3, 4));
-    }
-  };
-
-  tbe.nextBlockId = function (prefix) {
-    var blockId = prefix + String(tbe.blockIdSequence);
-    tbe.blockIdSequence += 1;
-    return blockId;
-  };
-
-  tbe.addBlock = function (x, y, name) {
-    var block = new this.FunctionBlock(x, y, name);
-    block.isPaletteBlock = false;
-    block.interactId = tbe.nextBlockId('d:');
-    this.diagramBlocks[block.interactId] = block;
-    return block;
-  };
-
-  tbe.addPaletteBlock = function (x, y, name, pgroup) {
-    var block = new this.FunctionBlock(x, y, name);
-    block.pgroup = pgroup;
-    block.isPaletteBlock = true;
-    block.interactId = tbe.nextBlockId('p:');
-    this.paletteBlocks[block.interactId] = block;
-
-    // Looks like blocks are added to main editor, so it is removed
-    // then added to the palette. Odd...
-    tbe.svg.removeChild(block.svgGroup);
-    if (block.rect.right + 30 > tbe.width) {
-      block.svgGroup.setAttribute('class', 'drag-group hiddenPaletteBlock');
-    }
-    tbe.tabGroups[pgroup].appendChild(block.svgGroup);
-
-    return block;
-  };
-
-  // Delete a chunk of blocks (typically one).
-  tbe.deleteChunk = function (block, endBlock) {
-
-    // Remember any tail so it can be slid over.
-    var tail = endBlock.next;
-    var head = block.prev;
-
-    // Disconnect the chunk from its surroundings.
-    if (head !== null) {
-      head.next = tail;
-    }
-    if (tail !== null) {
-      tail.prev = head;
-    }
-    block.prev = null;
-    endBlock.next = null;
-
-    // Now that the chunk has been disconnected, measure it.
-    var deleteWidth = block.chainWidth;
-    var tempBlock = null;
-
-    if (block.flowTail === endBlock && !block.isGroupSelected()) {
-      tbe.clearStates();
-      if (block.prev !== null) {
-        block.next.prev = block.prev;
-      } else {
-        block.next.prev = null;
-      }
-      block.next = null;
-
-      if (endBlock.next !== null) {
-        endBlock.prev.next = endBlock.next;
-      } else {
-        endBlock.prev.next = null;
-      }
-      endBlock.prev = null;
-
-      delete tbe.diagramBlocks[block.interactId];
-
-      tbe.svg.removeChild(block.svgGroup);
-      block.svgGroup = null;
-      block.svgRect = null;
-      block.next = null;
-      block.prev = null;
-
-      delete tbe.diagramBlocks[endBlock.interactId];
-
-      tbe.svg.removeChild(endBlock.svgGroup);
-      endBlock.svgGroup = null;
-      endBlock.svgRect = null;
-      endBlock.next = null;
-      endBlock.prev = null;
-    } else {
-      // Delete the chunk.
-      tbe.clearStates();
-
-      while (block !== null) {
-        tempBlock = block.next; // Make a copy of block.next before it becomes null
-        // Remove map entry for the block.
-        delete tbe.diagramBlocks[block.interactId];
-
-        tbe.svg.removeChild(block.svgGroup);
-        block.svgGroup = null;
-        block.svgRect = null;
-        block.next = null;
-        block.prev = null;
-
-        block = tempBlock;
-      }
-    }
-
-    // Slide any remaining blocks over to the left.
-    // The links have already been fixed.
-    if (tail !== null) {
-      tbe.animateMove(tail, tail.last, -deleteWidth, 0, 10);
-    }
-  };
-
-  tbe.deleteBlock = function () {};
-
-  // Copy a chunk or the rest of the chain, and return the copy.
-  // The section specified should not have links to parts outside.
-  tbe.replicateChunk = function (chain, endBlock, offsetX, offsetY) {
-
-    this.clearStates(); //???
-
-    var stopPoint = null;
-    if (endBlock !== undefined && endBlock !== null) {
-      // This might be null as well.
-      stopPoint = endBlock.next;
-    }
-
-    var newChain = null;
-    var newBlock = null;
-    var b = null;
-
-    // Copy the chain of blocks and set the newBlock field.
-    b = chain;
-    while (b !== stopPoint) {
-      newBlock = new this.FunctionBlock(b.left + offsetX, b.top + offsetY, b.name);
-      b.newBlock = newBlock;
-      if (newChain === null) {
-        newChain = newBlock;
-      }
-
-      // TODO can params and controller settings be combined?
-      //newBlock.params = JSON.parse(JSON.stringify(b.params));
-      newBlock.controllerSettings = JSON.parse(JSON.stringify(b.controllerSettings));
-      newBlock.isPaletteBlock = false;
-      newBlock.interactId = tbe.nextBlockId('d:');
-      this.diagramBlocks[newBlock.interactId] = newBlock;
-      b = b.next;
-    }
-    // Fix up pointers in the new chain.
-    b = chain;
-    while (b !== stopPoint) {
-      newBlock = b.newBlock;
-      newBlock.next = b.mapToNewBlock(b.next);
-      newBlock.prev = b.mapToNewBlock(b.prev);
-      newBlock.flowHead = b.mapToNewBlock(b.flowHead);
-      newBlock.flowTail = b.mapToNewBlock(b.flowTail);
-      b = b.next;
-    }
-    // Clear out the newBlock field, and fix up svg as needed.
-    b = chain;
-    while (b !== stopPoint) {
-      var temp = b.newBlock;
-      b.newBlock = null;
-      b = b.next;
-      temp.fixupChainCrossBlockSvg();
-    }
-
-    // Update images in the new chain.
-    b = newChain;
-    while (b !== null) {
-      b.updateSvg();
-      b = b.next;
-    }
-
-    // Return pointer to head of new chain.
-    return newChain;
-  };
-
-  //------------------------------------------------------------------------------
-  // FunctionBlock -- Constructor for FunctionBlock object.
-  //
-  //      *-- svgGroup
-  //        |
-  //        *--- custom graphics for bloc (clear to pointer)
-  //        |
-  //        *--- svgRect framing rec common to all blocks
-  //        |
-  //        *--- [svgCrossBlock] option behind block region graphics
-  //
-  tbe.FunctionBlock = function FunctionBlock(x, y, blockName) {
-
-    // Connect the generic block class to the behavior definition class.
-    this.name = blockName;
-    this.funcs = fblocks.bind(blockName);
-    if (typeof this.funcs.defaultSettings === 'function') {
-      this.controllerSettings = this.funcs.defaultSettings();
-    } else {
-      this.controllerSettings = { controller: 'none', data: 4 };
-    }
-
-    // Place holder for sequencing links.
-    this.prev = null;
-    this.next = null;
-    this.flowHead = null;
-    this.flowTail = null;
-
-    // Blocks at the top level have a nesting of 0.
-    this.nesting = 0;
-    this.newBlock = null;
-
-    // Dragging state information.
-    this.dragging = false;
-    this.snapTarget = null; // Object to append, prepend, replace
-    this.snapOpen = { // Object for snapping to the grid
-      top: null,
-      left: null
-    };
-    this.snapAction = null; // append, prepend, replace, ...
-    this.targetShadow = null; // Svg element to hilite target location
-
-    // Create the actual SVG object.
-    // It's a group of two pieces:
-    // a rounded rect and a group that holds the custom graphics for the block.
-    var width = this.controllerSettings.width;
-    if (width === undefined) {
-      width = 70;
-    }
-    this.rect = {
-      left: 0,
-      top: 0,
-      right: width,
-      bottom: 80
-    };
-    this.svgGroup = svgb.createGroup('drag-group', 0, 0);
-    if (blockName.startsWith('identity')) {
-      this.svgRect = icons.paletteBlockIdentity(1, 'function-block identity-block', 0, 0, width);
-    } else {
-      this.svgRect = icons.paletteBlock(1, 'function-block', 0, 0, this);
-    }
-    this.svgGroup.appendChild(this.svgRect);
-    this.svgCustomGroup = null; // see updateSvg()
-    this.updateSvg();
-
-    // Position block, relative to its initial location at (0, 0).
-    this.dmove(x, y, true);
-
-    // Add block to the editor tree. This makes it visible.
-    this.moveToFront();
-  };
-
-  tbe.FunctionBlock.prototype.isStartBlock = function () {
-    // This works for now.
-    return this.name.startsWith('identity');
-  };
-
-  // Create an image for the block base on its type.
-  tbe.FunctionBlock.prototype.updateSvg = function () {
-
-    // Remove the old custom image if they exist.
-    if (this.svgCustomGroup !== null) {
-      this.svgGroup.removeChild(this.svgCustomGroup);
-    }
-
-    // Build custom image for this block.
-    this.svgCustomGroup = svgb.createGroup('', 0, 0);
-    if (typeof this.funcs.svg === 'function') {
-      this.funcs.svg(this.svgCustomGroup, this);
-    }
-
-    // Add it to doc's SVG tree.
-    this.svgGroup.appendChild(this.svgCustomGroup);
-  };
-
-  // Checks if block passed in is in the same chain as this.
-  tbe.FunctionBlock.prototype.chainContainsBlock = function (other) {
-    // Block is the first block of the chain.
-    var block = this.first;
-    // Go through the whole chain and look for if any blocks same as other.
-    while (block !== null) {
-      // If a similarity is found, return true.
-      if (block === other) {
-        return true;
-      }
-      block = block.next;
-    }
-    // If no blocks that were the same were found, return false.
-    return false;
-  };
-
-  tbe.FunctionBlock.prototype.refreshNesting = function () {
-    var nesting = 0;
-    var b = this.first;
-    while (b !== null) {
-      if (b.flowTail !== null) {
-        b.nesting = nesting;
-        nesting += 1;
-      } else if (b.flowHead !== null) {
-        nesting -= 1;
-        b.nesting = nesting;
-      } else {
-        b.nesting = nesting;
-      }
-      b = b.next;
-    }
-  };
-
-  // Scan down the chain and allow any block that has cross block graphics
-  // to update them.
-  tbe.FunctionBlock.prototype.fixupChainCrossBlockSvg = function () {
-    // TODO, only refresh nesting when the links actually change.
-    // no need to do it during each animation step.
-    this.refreshNesting();
-    var b = this;
-    while (b !== null) {
-      if (typeof b.funcs.crossBlockSvg === 'function') {
-        b.funcs.crossBlockSvg(b);
-      }
-      b = b.next;
-    }
-  };
-
-  Object.defineProperty(tbe.FunctionBlock.prototype, 'first', {
-    get: function get() {
-      var block = this;
-      while (block.prev !== null) {
-        block = block.prev;
-      }
-      return block;
-    } });
-
-  Object.defineProperty(tbe.FunctionBlock.prototype, 'last', {
-    get: function get() {
-      var block = this;
-      while (block.next !== null) {
-        block = block.next;
-      }
-      return block;
-    } });
-
-  Object.defineProperty(tbe.FunctionBlock.prototype, 'chainWidth', {
-    get: function get() {
-      var block = this;
-      var width = 0;
-      while (block !== null) {
-        width += block.rect.right - block.rect.left;
-        block = block.next;
-      }
-      return width;
-    } });
-
-  Object.defineProperty(tbe.FunctionBlock.prototype, 'top', {
-    get: function get() {
-      return this.rect.top;
-    } });
-
-  Object.defineProperty(tbe.FunctionBlock.prototype, 'left', {
-    get: function get() {
-      return this.rect.left;
-    } });
-
-  Object.defineProperty(tbe.FunctionBlock.prototype, 'bottom', {
-    get: function get() {
-      return this.rect.bottom;
-    } });
-
-  Object.defineProperty(tbe.FunctionBlock.prototype, 'right', {
-    get: function get() {
-      return this.rect.right;
-    } });
-
-  Object.defineProperty(tbe.FunctionBlock.prototype, 'width', {
-    get: function get() {
-      return this.rect.right - this.rect.left;
-    } });
-
-  Object.defineProperty(tbe.FunctionBlock.prototype, 'height', {
-    get: function get() {
-      return this.rect.bottom - this.rect.top;
-    } });
-
-  // Example of an object property added with defineProperty with an accessor property descriptor
-  Object.defineProperty(tbe.FunctionBlock.prototype, 'interactId', {
-    get: function get() {
-      return this.svgRect.getAttribute('interact-id');
-    },
-    set: function set(id) {
-      this.svgGroup.setAttribute('interact-id', id);
-      this.svgRect.setAttribute('interact-id', id);
-    }
-  });
-
-  // mapToNewBlock -- uUed by replicateChunk to fix up pointers in a
-  // copied chain.
-  tbe.FunctionBlock.prototype.mapToNewBlock = function (object) {
-    if (object === undefined || object === null) {
-      return null;
-    } else {
-      return object.newBlock;
-    }
-  };
-
-  // Mark all block in the chain starting with 'this' block as being dragged.
-  // Disconnect from the previous part of the chain.
-  tbe.FunctionBlock.prototype.setDraggingState = function (state) {
-    // If this block is in a chain, disconnect it from blocks in front.
-    if (state && this.prev !== null) {
-      this.prev.next = null;
-      this.prev = null;
-    }
-    // Set the state of all blocks down the chain.
-    var block = this;
-    while (block !== null) {
-      block.dragging = state;
-      // block.hilite(state);
-      block = block.next;
-    }
-  };
-
-  tbe.FunctionBlock.prototype.moveToFront = function () {
-    // TODO moving to the front interrupts (prevents) the animations.
-    //tbe.svg.removeChild(this.svgGroup);
-    tbe.svg.insertBefore(this.svgGroup, tbe.svgCeiling);
-  };
-
-  tbe.FunctionBlock.prototype.markSelected = function (state) {
-    if (state) {
-      this.moveToFront();
-      this.svgRect.classList.add('selected-block');
-      if (this.flowHead !== null) {
-        this.flowHead.svgRect.classList.add('selected-block');
-      }
-      if (this.flowTail !== null) {
-        this.flowTail.svgRect.classList.add('selected-block');
-      }
-    } else {
-      this.svgRect.classList.remove('selected-block');
-    }
-  };
-
-  tbe.FunctionBlock.prototype.isSelected = function () {
-    return this.svgRect.classList.contains('selected-block');
-  };
-
-  // For a selected block find the last in the selected set.
-  tbe.FunctionBlock.prototype.selectionEnd = function () {
-    var block = this;
-    while (block.next !== null && block.next.isSelected()) {
-      block = block.next;
-    }
-    return block;
-  };
-
-  tbe.FunctionBlock.prototype.isLoopHead = function () {
-    return this.flowTail !== null;
-  };
-
-  tbe.FunctionBlock.prototype.isLoopTail = function () {
-    return this.flowHead !== null;
-  };
-
-  tbe.FunctionBlock.prototype.isCommented = function () {
-    return this.svgRect.classList.contains('commented');
-  };
-
-  tbe.FunctionBlock.prototype.isIdentity = function () {
-    return this.name.includes('identity');
-  };
-
-  // Checks if a selected loop is the only thing selected.
-  tbe.FunctionBlock.prototype.isIsolatedLoop = function () {
-    if (this.isLoopHead() && this.isSelected()) {
-      if (this.prev !== null && this.prev.isSelected()) {
-        return false;
-      } else if (this.flowTail.next !== null && this.flowTail.next.isSelected()) {
-        return false;
-      } else if (this.next !== this.flowTail && this.next.isSelected()) {
-        return false;
-      }
-    }
-    if (this.isLoopTail() && this.isSelected()) {
-      if (this.next !== null && this.next.isSelected()) {
-        return false;
-      } else if (this.flowHead.prev !== null && this.flowHead.prev.isSelected()) {
-        return false;
-      } else if (this.prev !== this.flowHead && this.prev.isSelected()) {
-        return false;
-      }
-    }
-    if (!this.isLoopHead() && !this.isLoopTail()) {
-      return false;
-    }
-    if (!this.isSelected()) {
-      return false;
-    }
-    return true;
-  };
-
-  // Determine if the block is part of selection that is more than one block
-  tbe.FunctionBlock.prototype.isGroupSelected = function () {
-    var before = false;
-    var after = false;
-    if (this.next !== null) {
-      before = this.next.isSelected();
-    }
-    if (this.prev !== null) {
-      after = this.prev.isSelected();
-    }
-    return this.isSelected() && (before || after);
-  };
-
-  tbe.FunctionBlock.prototype.isOnScreen = function () {
-    if (this.rect !== null) {
-      if (this.rect.left + this.width >= 0 && this.rect.right - this.width <= tbe.width) {
-        if (this.rect.top + this.height >= 0 && this.rect.bottom - this.height <= tbe.height) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
-
-  // Change the element class to trigger CSS changes.
-  tbe.FunctionBlock.prototype.hilite = function (state) {
-    // TODO looks like there is more than one bring to front
-    // unify the function and give it a better name.
-    if (state) {
-      // Bring highlighted block to top. Blocks don't normally
-      // overlap, so Z plane is not important. But blocks that are
-      // being dragged need to float above ones on the diagram.
-      this.moveToFront();
-    }
-  };
-
-  // Move a section of a chain by a delta (x, y) (from this to endBlock)
-  tbe.FunctionBlock.prototype.dmove = function (dx, dy, snapToInt, endBlock) {
-    var block = this;
-    if (endBlock === undefined) {
-      endBlock = null;
-    }
-
-    while (block !== null) {
-      var r = block.rect;
-      r.left += dx;
-      r.top += dy;
-      r.right += dx;
-      r.bottom += dy;
-      if (snapToInt) {
-        // Final locations are forced to integers for clean serialization.
-        r.top = Math.round(r.top);
-        r.left = Math.round(r.left);
-        r.bottom = Math.round(r.bottom);
-        r.right = Math.round(r.right);
-      }
-
-      if (block.svgGroup) {
-        svgb.translateXY(block.svgGroup, r.left, r.top);
-      }
-
-      if (block === endBlock) {
-        break;
-      }
-      block = block.next;
-    }
-  };
-
-  //------------------------------------------------------------------------------
-  // Calculate the intersecting area of two rectangles.
-  tbe.intersectingArea = function intersectingArea(r1, r2) {
-    var x = Math.min(r1.right, r2.right) - Math.max(r1.left, r2.left);
-    if (x < 0) return 0;
-    var y = Math.min(r1.bottom, r2.bottom) - Math.max(r1.top, r2.top);
-    if (y < 0) {
-      return 0;
-    }
-    return x * y;
-  };
-
-  tbe.FunctionBlock.prototype.hilitePossibleTarget = function () {
-    var self = this;
-    var target = null;
-    var overlap = 0;
-    var bestOverlap = 0;
-    var action = null;
-    var rect = null;
-    var thisWidth = this.width;
-
-    // Look at every diagram block taking into consideration
-    // whether or not it is in the chain.
-    tbe.forEachDiagramBlock(function (entry) {
-      if (entry !== self && !entry.dragging) {
-        rect = {
-          top: entry.top,
-          bottom: entry.bottom,
-          left: entry.left - thisWidth * 0.5,
-          right: entry.right - thisWidth * 0.5
-        };
-        if (entry.prev === null) {
-          // For left edge, increase gravity field
-          rect.left -= thisWidth * 0.5;
-        }
-        if (entry.next === null) {
-          // For right edge, increase gravity field
-          rect.right += thisWidth * 1.5;
-        }
-
-        overlap = tbe.intersectingArea(self.rect, rect);
-        if (overlap > bestOverlap) {
-          bestOverlap = overlap;
-          target = entry;
-        }
-      }
-    });
-
-    // Refine the action based on geometery.
-    if (target !== null) {
-      if (self.left <= target.left) {
-        if (target.prev !== null) {
-          if (!self.isStartBlock()) {
-            action = 'insert';
-          }
-        } else {
-          if (!target.isStartBlock()) {
-            action = 'prepend';
-          }
-        }
-      } else if (!self.name.includes('identity')) {
-        action = 'append';
-      }
-    }
-
-    var shadowX = null;
-    var shadowY = null;
-    var gridsize = 40;
-
-    if (action === null) {
-      action = 'outsnap';
-      if (target !== null) {
-        var diff = target.rect.bottom - this.rect.top;
-        shadowX = Math.round((this.rect.top + diff) / gridsize) * gridsize;
-        shadowY = Math.round(this.rect.left / gridsize) * gridsize;
-        target = null;
-      }
-    }
-
-    if (shadowX === null && shadowY === null) {
-      shadowX = Math.round(this.rect.top / gridsize) * gridsize;
-      shadowY = Math.round(this.rect.left / gridsize) * gridsize;
-    }
-
-    // Update shadows as needed.
-    if (this.snapTarget !== target || this.snapAction !== action) {
-      if (this.snapTarget !== null) {
-        this.removeTargetShadows();
-      }
-      this.snapTarget = target;
-      this.snapAction = action;
-      if (target !== null) {
-        this.insertTargetShadows(target, action);
-      }
-    } else if (action === 'outsnap' && (this.snapOpen.top !== shadowX || this.snapOpen.left !== shadowY || this.snapAction !== action)) {
-      this.removeTargetShadows();
-      this.snapAction = action;
-      this.snapOpen = {
-        top: shadowX,
-        left: shadowY
-      };
-
-      this.insertTargetShadows(this.snapOpen, action);
-    }
-    return target;
-  };
-
-  // Show the shadow blocks to indicate where the blocks will end up if placed
-  // in the current location.
-  tbe.FunctionBlock.prototype.insertTargetShadows = function (target, action) {
-    var block = this;
-    var y = target.top;
-    var x = 0;
-    if (action === 'prepend') {
-      x = target.left - this.chainWidth;
-    } else if (action === 'insert') {
-      // The shadows will be covered up, and not going to move the
-      // down stream blocks until the move is committed.
-      // so offset them a bit.
-      // TODO show above OR based on where dragging blocks are coming from.
-      x = target.left - 20;
-      y -= 25;
-    } else if (action === 'append') {
-      x = target.right;
-    } else if (action === 'outsnap') {
-      var gridsize = 40;
-      x = gridsize * Math.round(this.rect.left / gridsize);
-      y = gridsize * Math.round(this.rect.top / gridsize);
-    } else {
-      return;
-    }
-    var shadow = null;
-    while (block !== null) {
-      if (action === 'outsnap') {
-        shadow = icons.paletteBlock(1, 'shadow-block shadow-block-outsnap', x, y, block); //svgb.createRect('shadow-block shadow-block-outsnap', x, y, block.width, block.height, 10);
-      } else {
-        shadow = icons.paletteBlock(1, 'shadow-block', x, y, block); //svgb.createRect('shadow-block', x, y, block.width, block.height, 10);
-      }
-      tbe.svg.insertBefore(shadow, tbe.background.nextSibling);
-
-      block.targetShadow = shadow;
-      x += block.width;
-      block = block.next;
-    }
-  };
-
-  tbe.FunctionBlock.prototype.removeTargetShadows = function () {
-    var block = this;
-    var shadowsToRemove = [];
-    while (block !== null) {
-      var shadow = block.targetShadow;
-      if (shadow !== null) {
-        shadowsToRemove.push(shadow);
-        if (block.snapAction === 'outsnap') {
-          shadow.setAttribute('class', 'shadow-block-leave shadow-block-leave-outsnap');
-        } else {
-          shadow.setAttribute('class', 'shadow-block-leave');
-        }
-        block.targetShadow = null;
-      }
-      block = block.next;
-    }
-    // Give some time for the animation to complete, then remove.
-    setTimeout(function () {
-      shadowsToRemove.forEach(function (elt) {
-        if (elt.parentNode !== null) {
-          tbe.svg.removeChild(elt);
-        }
-      });
-    }, 1000);
-    var shadows = document.getElementsByClassName('shadow-block');
-    for (var i = shadows.length - 1; i >= 0; i--) {
-      shadows[i].parentNode.removeChild(shadows[i]);
-    }
-  };
-
-  tbe.FunctionBlock.prototype.moveToPossibleTarget = function () {
-    var thisLast = this.last;
-    var targx = 0;
-    var dx = 0;
-    var dy = 0;
-    assert(this.prev === null, 'err1');
-    assert(thisLast.next === null, 'err2');
-
-    if (this.snapTarget !== null) {
-      // TODO:assert that chain we have has clean prev/next links
-      // Append/Prepend the block(chain) to the list
-      if (this.snapAction === 'prepend') {
-        assert(this.snapTarget.prev === null, 'err3');
-        targx = this.snapTarget.left - this.chainWidth;
-        thisLast.next = this.snapTarget;
-        this.snapTarget.prev = thisLast;
-      } else if (this.snapAction === 'append') {
-        assert(this.snapTarget.next === null, 'err4');
-        targx = this.snapTarget.right;
-        this.prev = this.snapTarget;
-        this.snapTarget.next = this;
-        // slide down post blocks if insert
-        // logically here, in annimation bellow
-      } else if (this.snapAction === 'insert') {
-        assert(this.snapTarget.prev !== null, 'err5');
-        targx = this.snapTarget.left;
-        // Determin space needed for new segment
-        // before its spliced in.
-        var width = this.chainWidth;
-
-        thisLast.next = this.snapTarget;
-        this.prev = this.snapTarget.prev;
-        this.snapTarget.prev.next = this;
-        this.snapTarget.prev = thisLast;
-
-        // Set up animation to slide down old blocks.
-        tbe.animateMove(this.snapTarget, this.snapTarget.last, width, 0, 10);
-      }
-
-      // Set up an animation to move the dragging blocks to new location.
-      dx = targx - this.left;
-      dy = this.snapTarget.top - this.top;
-      // The model snaps directly to the target location
-      // but the view eases to it.
-      tbe.animateMove(this, thisLast, dx, dy, 10);
-    } else if (this.snapOpen !== null) {
-      dx = Math.round(this.snapOpen.left - this.rect.left);
-      dy = Math.round(this.snapOpen.top - this.rect.top);
-      tbe.animateMove(this, thisLast, dx, dy, 10);
-    } else {
-      // Nothing to snap to so leave it where is ended up.
-      // still need sound though
-      // tbe.audio.drop.play();
-    }
-    this.hilite(false);
-    this.snapTarget = null;
-    this.snapAction = null;
-    this.snapOpen = {
-      top: null,
-      left: null
-    };
-  };
-
-  // animateMove -- move a chunk of block to its new location. The prev and next
-  // links should already be set up for the final location.
-  tbe.animateMove = function (firstBlock, lastBlock, dx, dy, frames) {
-    var state = {
-      frame: frames,
-      adx: dx / frames,
-      ady: dy / frames,
-      chunkStart: firstBlock,
-      chunkEnd: lastBlock
-    };
-    tbe.animateMoveCore(state);
-  };
-
-  tbe.animateMoveCore = function (state) {
-    var frame = state.frame;
-    state.chunkStart.dmove(state.adx, state.ady, frame === 1, state.chunkEnd);
-    state.chunkStart.fixupChainCrossBlockSvg();
-    if (frame > 1) {
-      state.frame = frame - 1;
-      requestAnimationFrame(function () {
-        tbe.animateMoveCore(state);
-      });
-    } else {
-      // Once animation is over shadows are covered, remove them.
-      tbe.audio.playSound(tbe.audio.shortClick);
-      state.chunkStart.removeTargetShadows();
-    }
-  };
-
-  tbe.clearDiagramBlocks = function clearDiagramBlocks() {
-    tbe.internalClearDiagramBlocks();
-  };
-  tbe.internalClearDiagramBlocks = function clearDiagramBlocks() {
-    tbe.forEachDiagramBlock(function (block) {
-      tbe.svg.removeChild(block.svgGroup);
-      block.svgGroup = null;
-      block.svgCustomGroup = null;
-      block.svgRect = null;
-      block.next = null;
-      block.prev = null;
-    });
-    tbe.diagramBlocks = {};
-  };
-
-  // Find a selected block on the diragram. There should only
-  // be one set of blocks selected.
-  tbe.findSelectedChunk = function findSelectedChunk() {
-    var selected = null;
-    tbe.forEachDiagramBlock(function (block) {
-      if (selected === null && block.isSelected()) {
-        selected = block;
-      }
-    });
-    return selected;
-  };
-
-  // Starting at a block that was clicked on find the logical range that
-  // should be selected, typically that is the selected block to the end.
-  // But for flow blocks it more subtle.
-  tbe.findChunkStart = function findChunkStart(clickedBlock) {
-    var chunkStart = clickedBlock;
-    while (chunkStart.isSelected()) {
-      if (chunkStart.prev !== null && chunkStart.prev.isSelected()) {
-        chunkStart = chunkStart.prev;
-      } else {
-        break;
-      }
-    }
-    // Scan to end see if a flow tail is found.
-    /*var b = chunkStart;
-    while (b !== null) {
-      // If tail found inlcude the whole flow block.
-      if (b.flowHead !== null) {
-        chunkStart = b.flowHead;
-      }
-      // If at the top its a clean place to break the chain.
-      if (b.nesting === 0) {
-        break;
-      }
-      b = b.next;
-    }*/
-    return chunkStart;
-  };
-  // Finds the block before where a block can be placed (end of chain)
-  // Used when block is dropped by tapping on palette
-  tbe.findInsertionPoint = function findInsertionPoint() {
-    var foundBlock = null;
-    var defaultX = Math.round(tbe.defaultBlockLoc[0]);
-    var defaultY = Math.round(tbe.defaultBlockLoc[1]);
-
-    // Find the block at the default location
-    tbe.forEachDiagramBlock(function (block) {
-      var top = block.top;
-      var left = block.left;
-      if (top === defaultY && left === defaultX) {
-        foundBlock = block;
-      }
-    });
-    // Go find the end of the chain with foundBlock as the start
-    while (foundBlock !== null && foundBlock.next !== null) {
-      foundBlock = foundBlock.next;
-    }
-    return foundBlock;
-  };
-  // Places variable block after the the insertion point
-  tbe.autoPlace = function autoPlace(block) {
-    var foundBlock = tbe.findInsertionPoint();
-    block = tbe.replicateChunk(block, null, 0, 0);
-    var x = tbe.defaultBlockLoc[0];
-    var y = tbe.defaultBlockLoc[1];
-    var dx = Math.round(x - block.left);
-    var dy = Math.round(y - block.top);
-
-    if (foundBlock !== null && block.isIdentity()) {
-      block.dmove(dx, dy);
-      tbe.identityAutoPlace(block);
-      return;
-    }
-
-    // Check if a chain currently exists
-    // If one exists, move the block next to it
-    if (foundBlock === null) {
-      block.dmove(dx, dy);
-    } else {
-      block.dmove(dx + foundBlock.right - x, dy);
-      foundBlock.next = block;
-      block.prev = foundBlock;
-    }
-  };
-
-  tbe.identityAutoPlace = function identityAutoPlace(block) {
-    tbe.forEachDiagramBlock(function (compare) {
-      //console.log("compare", tbe.intersectingArea(compare, block));
-      if (tbe.intersectingArea(compare, block) > 100 && compare !== block && block.bottom + 120 < tbe.height - 150) {
-        block.dmove(0, 120);
-        tbe.identityAutoPlace(block);
-        return;
-      } else if (block.bottom + 120 > tbe.height - 100) {
-        tbe.deleteChunk(block, block);
-      }
-    });
-  };
-
-  tbe.keyEvent = function (e) {
-    e = e || window.event;
-
-    // Browsers report keys code differently, check both.
-    var key = e.which || e.keyCode || 0;
-
-    // Look for control modifier
-    var ctrl = e.ctrlKey ? e.ctrlKey : key === 17;
-
-    if (key === 86 && ctrl) {
-      log.trace("Ctrl + V Pressed !");
-    } else if (key === 67 && ctrl) {
-      log.trace("Ctrl + C Pressed !");
-      var array = [];
-      tbe.forEachDiagramBlock(function (block) {
-        if (block.isSelected()) {
-          array.push(block);
-        }
-      });
-      var textArea = document.createElement("textarea");
-
-      textArea.style.position = 'fixed';
-      textArea.style.top = 0;
-      textArea.style.left = 0;
-      textArea.style.width = '2em';
-      textArea.style.height = '2em';
-      textArea.style.padding = 0;
-      textArea.style.border = 'none';
-      textArea.style.outline = 'none';
-      textArea.style.boxShadow = 'none';
-      textArea.style.background = 'transparent';
-      if (array.length >= 0) {
-        textArea.value = teakText.chunkToText(tbe.findChunkStart(array[0]), null, '');
-        log.trace(textArea);
-        document.body.appendChild(textArea);
-        textArea.select();
-
-        try {
-          var successful = document.execCommand('copy');
-          var msg = successful ? 'successful' : 'unsuccessful';
-          log.trace('Copying text command was ' + msg);
-        } catch (err) {
-          log.trace('Oops, unable to copy');
-        }
-      }
-
-      document.body.removeChild(textArea);
-    } else if (key === 8) {
-      if (tbe.components.blockSettings.isOpen()) {
-        tbe.components.blockSettings.deleteGroup();
-      } else {
-        var sBlock = tbe.findSelectedChunk();
-        if (sBlock !== null) {
-          tbe.deleteChunk(sBlock, sBlock.selectionEnd());
-        }
-      }
-    } else if (key === 49) {
-      tbe.loadDoc('docA');
-    } else if (key === 50) {
-      tbe.loadDoc('docB');
-    } else if (key === 51) {
-      tbe.loadDoc('docC');
-    } else if (key === 52) {
-      tbe.loadDoc('docD');
-    } else if (key === 53) {
-      tbe.loadDoc('docE');
-    } else if (key === 80) {
-      conductor.playAll();
-    } else if (key === 83) {
-      conductor.stopAll();
-    } else if (key === 88) {
-      var cloneBlocks = [];
-      tbe.forEachDiagramBlock(function (block) {
-        if (block.isSelected()) {
-          cloneBlocks.push(block);
-        }
-      });
-      if (cloneBlocks.length !== 0) {
-        var clone = tbe.replicateChunk(cloneBlocks[0], cloneBlocks[cloneBlocks.length - 1], 0, 0);
-
-        // TODO put it in a non-hardcoded place
-        var dy = -140;
-        if (clone.top < 140) {
-          dy = 140;
-        }
-        tbe.animateMove(clone, clone.last, 0, dy, 20);
-      }
-    } else if (ctrl && key === 65) {
-      var selected = null;
-      tbe.forEachDiagramBlock(function (block) {
-        if (block.isSelected()) {
-          selected = block;
-        }
-      });
-
-      tbe.clearStates();
-
-      while (selected.next !== null) {
-        selected.markSelected(true);
-        selected = selected.next;
-      }
-      while (selected !== null) {
-        selected.markSelected(true);
-        selected = selected.prev;
-      }
-    }
-  };
-
-  document.body.addEventListener("keydown", tbe.keyEvent, false);
-
-  // Attach these interactions properties based on the class property of the DOM elements
-  tbe.configInteractions = function configInteractions() {
-    var thisTbe = tbe;
-
-    // Most edit transaction start from code dispatched from this code.
-    // Know it well and edit with caution. There are subtle interaction states
-    // managed in these event handlers.
-    interact('.drag-delete').on('down', function () {
-      var block = thisTbe.elementToBlock(event.target);
-      if (block === null) return;
-      thisTbe.clearStates();
-      thisTbe.deleteChunk(block, block.last);
-    });
-
-    // Pointer events to the background go here. Might make sure the event is not
-    // right next to a block, e.g. allow some safe zones.
-    interact('.editor-background').on('down', function (event) {
-      try {
-        thisTbe.clearStates();
-        teakselection.startSelectionBoxDrag(event);
-      } catch (error) {
-        log.trace('exception in drag selection');
-      }
-    });
-
-    // Event directed to function blocks (SVG objects with class 'drag-group')
-    // These come in two main types: pointer events(mouse, track, and touch) and
-    // drag events. Drag events start manually, if the semantics of the pointer
-    // event indicate that makes sense. Note that the object at the root of the
-    // drag event may differ from the object the pointer event came to.
-    // For example, dragging may use the head of a flow block, not the tail that was
-    // clicked on or that chain dragged might be a copy of the block clicked on.
-    //
-    // After making change test on FF, Safari, Chrome, desktop and tablet. Most
-    // browser breaking behaviour differences have been in this code.
-
-    interact('.drag-group')
-    // Pointer events.
-    .on('down', function (event) {
-      tbe.pointerDownObject = event.target;
-    }).on('tap', function (event) {
-      var block = thisTbe.elementToBlock(event.target);
-      if (block !== null && block.isPaletteBlock) {
-        // Tapping on an palette item will place it on the sheet.
-        tbe.autoPlace(block);
-      } else {
-        // Tapping on diagram block brings up a config page.
-        actionDots.reset();
-        thisTbe.components.blockSettings.tap(block);
-      }
-    }).on('up', function (event) {
-      var block = thisTbe.elementToBlock(event.target);
-      if (block.rect.top > tbe.height - 100 && !block.isPaletteBlock) {
-        event.interaction.stop();
-        block.setDraggingState(false);
-        if (block.isLoopHead()) {
-          block.next.markSelected(true);
-          block.markSelected(true);
-          tbe.deleteChunk(block, block.last);
-        } else if (block.isLoopTail()) {
-          tbe.deleteChunk(block.flowHead, block.last);
-        } else {
-          tbe.deleteChunk(block, block.last);
-        }
-      }
-    }).on('move', function (event) {
-      try {
-        var interaction = event.interaction;
-        var block = thisTbe.elementToBlock(event.target);
-        if (block.name === 'tail') {
-          block = block.flowHead;
-        }
-        // If the pointer was moved while being held down
-        // and an interaction hasn't started yet...
-        if (interaction.pointerIsDown && !interaction.interacting()) {
-          if (tbe.pointerDownObject === event.target) {
-            block = tbe.findChunkStart(block);
-            var targetToDrag = block.svgGroup;
-            var notIsolated = block.next !== null && block.prev !== null;
-            var next = block;
-            var prev = block;
-            if (block.nesting > 0 && notIsolated && !block.isGroupSelected()) {
-              next = block.next;
-              prev = block.prev;
-              block.next.prev = prev;
-              block.prev.next = next;
-              block.next = null;
-              block.prev = null;
-              if (next !== null) {
-                tbe.animateMove(next, next.last, -block.width, 0, 10);
-              }
-            } else if (block.nesting > 0 && notIsolated && block.isGroupSelected()) {
-              next = block;
-              prev = block.prev;
-              while (next.next !== null && next.next.isSelected()) {
-                next = next.next;
-              }
-              var nextCopy = next.next;
-              next.next.prev = prev;
-              prev.next = next.next;
-              next.next = null;
-              block.prev = null;
-              if (next !== null) {
-                tbe.animateMove(nextCopy, nextCopy.last, -block.chainWidth, 0, 10);
-              }
-            }
-
-            // If coming from palette, or if coming from shift drag...
-            if (block.isPaletteBlock || event.shiftKey) {
-              var offsetX = 0;
-              var offsetY = 0;
-              if (block.isPaletteBlock) {
-                var pageRect = event.target.getBoundingClientRect();
-                offsetX = pageRect.x - block.left;
-                offsetY = pageRect.y - block.top;
-              }
-              block = thisTbe.replicateChunk(block, null, offsetX, offsetY);
-              targetToDrag = block.svgGroup;
-            }
-
-            // Start a drag interaction targeting the clone.
-            block.setDraggingState(true);
-
-            tbe.clearStates();
-            interaction.start({ name: 'drag' }, event.interactable, targetToDrag);
-          }
-        } else {
-          tbe.pointerDownObject = null;
-        }
-      } catch (error) {
-        log.trace('Exception in move event', error);
-      }
-    }).draggable({
-      manualStart: true, // Drag wont start until initiated by code.
-      restrict: {
-        restriction: thisTbe.svg,
-        endOnly: true,
-        // Restrictions, by default, are for the point not the whole object
-        // so R and B are 1.x to include the width and height of the object.
-        // 'Coordinates' are percent of width and height.
-        elementRect: { left: -0.2, top: -0.2, right: 1.2, bottom: 2.4 }
-        // TODO bottom needs to exclude the palette.
-      },
-      inertia: {
-        resistance: 20,
-        minSpeed: 50,
-        endSpeed: 1
-      },
-      max: Infinity,
-      onstart: function onstart() {},
-      onend: function onend(event) {
-        var block = thisTbe.elementToBlock(event.target);
-        if (block === null) return;
-
-        if (block.dragging) {
-          // If snap happens in coastin-move
-          // the chain will no longer be dragging.
-          block.moveToPossibleTarget();
-          block.setDraggingState(false);
-        }
-
-        tbe.moveToFront(block, tbe.dropAreaGroup);
-      },
-      onmove: function onmove(event) {
-        // Since there is inertia these callbacks continue to
-        // happen after the user lets go.
-
-        var block = thisTbe.elementToBlock(event.target);
-        if (block === null) return;
-        if (!block.dragging) {
-          // If snap happens in coasting-move
-          // the chain will no longer be dragging.
-          return;
-        }
-
-        // Puts the blocks being dragged at the top
-        tbe.moveToFront(block, tbe.svgCeiling);
-
-        // Move the chain to the new location based on deltas.
-        block.dmove(event.dx, event.dy, true);
-
-        // Then see if there is a possible target, a place to snap to.
-        var target = block.hilitePossibleTarget();
-
-        // If there is a target and its in the coasting phase then redirect
-        // the coasting to the target.
-        if (target !== null) {
-          var iStatus = event.interaction.inertiaStatus;
-          if (iStatus !== undefined && iStatus !== null && iStatus.active) {
-            // Its in the coasting state, just move it to the snapping place.
-            block.moveToPossibleTarget();
-            block.setDraggingState(false);
-          }
-        }
-      }
-    });
-  };
-
-  tbe.moveToFront = function (blockChain, ceiling) {
-    var temp = blockChain;
-    while (temp !== null) {
-      //  tbe.svg.append(temp.svgGroup);
-      tbe.svg.insertBefore(temp.svgGroup, ceiling);
-      temp = temp.next;
-    }
-  };
-
-  tbe.blocksOnScreen = function () {
-    var toReturn = false;
-    tbe.forEachDiagramBlock(function (block) {
-      if (block.isOnScreen()) {
-        toReturn = true;
-      }
-    });
-    if (Object.keys(tbe.diagramBlocks).length === 0) {
-      return false;
-    }
-    return toReturn;
-  };
-
-  tbe.sizePaletteToWindow = function sizePaletteToWindow() {
-    var w = tbe.width;
-    var h = tbe.height;
-
-    svgb.resizeRect(tbe.background, w, h);
-    tbe.windowRect = { left: 0, top: 0, right: w, bottom: h };
-
-    var scale = 1.0;
-    if (h < 250) {
-      scale = 250 / 500;
-    } else if (h < 500) {
-      scale = h / 500;
-    }
-
-    //var top = h - 90;
-    var paletteHeight = h - 100 * scale;
-    svgb.translateXY(tbe.dropAreaGroup, 0, paletteHeight);
-    for (var i = 0; i < tbe.dropAreaGroup.childNodes.length; i++) {
-      var tab = tbe.dropAreaGroup.childNodes[i];
-      var r = tab.childNodes[0];
-      svgb.resizeRect(r, w / scale, 100);
-      var scalestr = 'scale(' + scale + ')';
-      tab.setAttribute('transform', scalestr);
-    }
-  };
-
-  tbe.createTabSwitcherButton = function () {
-    var group = svgb.createGroup('tabSwitcher', 0, 0);
-    var circle = svgb.createCircle('tabSwitcherRing', 50, 50, 40, 0);
-    group.appendChild(circle);
-    return group;
-  };
-
-  tbe.buildTabs = function () {
-    var dropAreaGroup = svgb.createGroup('dropAreaGroup', 0, 0);
-    var names = ['Start', 'Action', 'Control'];
-    for (var i = 0; i < 3; i++) {
-      var group = svgb.createGroup('', 0, 0);
-      var className = 'area' + String(i + 1);
-      var rect = svgb.createRect('dropArea ' + className, 0, 0, tbe.width, 100, 0);
-      var tab = svgb.createRect('dropArea ' + className, 10 + 160 * i, -30, 150, 40, 5);
-      var text = svgb.createText('dropArea svg-clear', 20 + 160 * i, -10, names[i]);
-      group.appendChild(rect);
-      group.appendChild(tab);
-      group.appendChild(text);
-      dropAreaGroup.appendChild(group);
-    }
-
-    interact('.dropArea').on('down', function (event) {
-      var group = event.target.parentNode.getAttribute('group');
-      tbe.switchTabs(group);
-    });
-
-    this.svg.insertBefore(dropAreaGroup, tbe.svgCeiling);
-    this.dropAreaGroup = dropAreaGroup;
-
-    tbe.tabGroups = [];
-    tbe.tabGroups['start'] = tbe.dropAreaGroup.childNodes[0];
-    tbe.tabGroups['fx'] = tbe.dropAreaGroup.childNodes[1];
-    tbe.tabGroups['control'] = tbe.dropAreaGroup.childNodes[2];
-
-    // For event routing.
-    tbe.tabGroups['start'].setAttribute('group', 'start');
-    tbe.tabGroups['fx'].setAttribute('group', 'fx');
-    tbe.tabGroups['control'].setAttribute('group', 'control');
-  };
-
-  tbe.switchTabs = function (group) {
-    // This moves the tab background to the front.
-    this.clearStates();
-    var tab = tbe.tabGroups[group];
-    this.dropArea = tab;
-    tbe.dropAreaGroup.appendChild(tab);
-    tbe.showTabGroup(group);
-  };
-
-  tbe.showTabGroup = function (group) {
-    tbe.forEachPalette(function (block) {
-      if (block.pgroup === group) {
-        block.svgGroup.setAttribute('class', 'drag-group');
-      } else {
-        block.svgGroup.setAttribute('class', 'hiddenPaletteBlock');
-      }
-    });
-  };
-
-  tbe.resize = function () {
-    // This is the logical size (used by SVG, etc) not retina pixels.
-    tbe.width = window.innerWidth;
-    tbe.height = window.innerHeight;
-    // First resize palette and background then resize the action buttons
-    tbe.sizePaletteToWindow();
-    actionDots.resize(tbe.width, tbe.height);
-  };
-
-  tbe.addPalette = function (palette) {
-    var leftIndent = 30;
-    var indent = leftIndent;
-    var increment = 30;
-    var lastGroup = 'start';
-
-    tbe.buildTabs();
-
-    var blocks = palette.blocks;
-    var blockTop = 10; //tbe.height - 90;
-    for (var index = 0; index < blocks.length; index++) {
-      var name = blocks[index].name;
-      var pgroup = blocks[index].group;
-      if (pgroup !== lastGroup) {
-        indent = leftIndent;
-        increment = 15;
-        lastGroup = pgroup;
-      }
-      var block = this.addPaletteBlock(indent, blockTop, name, pgroup);
-
-      if (name === 'loop') {
-        // The loop is two blocks, needs a little special work here.
-        var blockTail = this.addPaletteBlock(block.right, blockTop, 'tail', 'control');
-        block.next = blockTail;
-        blockTail.prev = block;
-        // A flow block set has direct pointers between the two end points.
-        block.flowTail = blockTail;
-        blockTail.flowHead = block;
-        blockTail.fixupChainCrossBlockSvg();
-      }
-      indent += block.chainWidth + increment;
-    }
-
-    tbe.switchTabs('start');
-    // dropAreaGroup.appendChild(tbe.createTabSwitcherButton());
-  };
-
-  return tbe;
+    b = b.next;
+  }*/
+		return chunkStart;
+	};
+	// Finds the block before where a block can be placed (end of chain)
+	// Used when block is dropped by tapping on palette
+	tbe.findInsertionPoint = function findInsertionPoint() {
+		var foundBlock = null;
+		var defaultX = Math.round(tbe.defaultBlockLoc[0]);
+		var defaultY = Math.round(tbe.defaultBlockLoc[1]);
+
+		// Find the block at the default location
+		tbe.forEachDiagramBlock(function (block) {
+			var top = block.top;
+			var left = block.left;
+			if (top === defaultY && left === defaultX) {
+				foundBlock = block;
+			}
+		});
+		// Go find the end of the chain with foundBlock as the start
+		while (foundBlock !== null && foundBlock.next !== null) {
+			foundBlock = foundBlock.next;
+		}
+		return foundBlock;
+	};
+	// Places variable block after the the insertion point
+	tbe.autoPlace = function autoPlace(block) {
+		var foundBlock = tbe.findInsertionPoint();
+		block = tbe.replicateChunk(block, null, 0, 0);
+		var x = tbe.defaultBlockLoc[0];
+		var y = tbe.defaultBlockLoc[1];
+		var dx = Math.round(x - block.left);
+		var dy = Math.round(y - block.top);
+
+		if (foundBlock !== null && block.isIdentity()) {
+			block.dmove(dx, dy);
+			tbe.identityAutoPlace(block);
+			return;
+		}
+
+		// Check if a chain currently exists
+		// If one exists, move the block next to it
+		if (foundBlock === null) {
+			block.dmove(dx, dy);
+		} else {
+			block.dmove(dx + foundBlock.right - x, dy);
+			foundBlock.next = block;
+			block.prev = foundBlock;
+		}
+	};
+
+	tbe.identityAutoPlace = function identityAutoPlace(block) {
+		tbe.forEachDiagramBlock(function (compare) {
+			//console.log("compare", tbe.intersectingArea(compare, block));
+			if (tbe.intersectingArea(compare, block) > 100 && compare !== block && block.bottom + 120 < tbe.height - 150) {
+				block.dmove(0, 120);
+				tbe.identityAutoPlace(block);
+				return;
+			} else if (block.bottom + 120 > tbe.height - 100) {
+				tbe.deleteChunk(block, block);
+			}
+		});
+	};
+
+	tbe.keyEvent = function (e) {
+		e = e || window.event;
+
+		// Browsers report keys code differently, check both.
+		var key = e.which || e.keyCode || 0;
+
+		// Look for control modifier
+		var ctrl = e.ctrlKey ? e.ctrlKey : key === 17;
+
+		if (key === 86 && ctrl) {
+			log.trace("Ctrl + V Pressed !");
+		} else if (key === 67 && ctrl) {
+			log.trace("Ctrl + C Pressed !");
+			var array = [];
+			tbe.forEachDiagramBlock(function (block) {
+				if (block.isSelected()) {
+					array.push(block);
+				}
+			});
+			var textArea = document.createElement("textarea");
+
+			textArea.style.position = 'fixed';
+			textArea.style.top = 0;
+			textArea.style.left = 0;
+			textArea.style.width = '2em';
+			textArea.style.height = '2em';
+			textArea.style.padding = 0;
+			textArea.style.border = 'none';
+			textArea.style.outline = 'none';
+			textArea.style.boxShadow = 'none';
+			textArea.style.background = 'transparent';
+			if (array.length >= 0) {
+				textArea.value = teakText.chunkToText(tbe.findChunkStart(array[0]), null, '');
+				log.trace(textArea);
+				document.body.appendChild(textArea);
+				textArea.select();
+
+				try {
+					var successful = document.execCommand('copy');
+					var msg = successful ? 'successful' : 'unsuccessful';
+					log.trace('Copying text command was ' + msg);
+				} catch (err) {
+					log.trace('Oops, unable to copy');
+				}
+			}
+
+			document.body.removeChild(textArea);
+		} else if (key === 8) {
+			if (tbe.components.blockSettings.isOpen()) {
+				tbe.components.blockSettings.deleteGroup();
+			} else {
+				var sBlock = tbe.findSelectedChunk();
+				if (sBlock !== null) {
+					tbe.deleteChunk(sBlock, sBlock.selectionEnd());
+				}
+			}
+		} else if (key === 49) {
+			tbe.loadDoc('docA');
+		} else if (key === 50) {
+			tbe.loadDoc('docB');
+		} else if (key === 51) {
+			tbe.loadDoc('docC');
+		} else if (key === 52) {
+			tbe.loadDoc('docD');
+		} else if (key === 53) {
+			tbe.loadDoc('docE');
+		} else if (key === 80) {
+			conductor.playAll();
+		} else if (key === 83) {
+			conductor.stopAll();
+		} else if (key === 88) {
+			var cloneBlocks = [];
+			tbe.forEachDiagramBlock(function (block) {
+				if (block.isSelected()) {
+					cloneBlocks.push(block);
+				}
+			});
+			if (cloneBlocks.length !== 0) {
+				var clone = tbe.replicateChunk(cloneBlocks[0], cloneBlocks[cloneBlocks.length - 1], 0, 0);
+
+				// TODO put it in a non-hardcoded place
+				var dy = -140;
+				if (clone.top < 140) {
+					dy = 140;
+				}
+				tbe.animateMove(clone, clone.last, 0, dy, 20);
+			}
+		} else if (ctrl && key === 65) {
+			var selected = null;
+			tbe.forEachDiagramBlock(function (block) {
+				if (block.isSelected()) {
+					selected = block;
+				}
+			});
+
+			tbe.clearStates();
+
+			while (selected.next !== null) {
+				selected.markSelected(true);
+				selected = selected.next;
+			}
+			while (selected !== null) {
+				selected.markSelected(true);
+				selected = selected.prev;
+			}
+		}
+	};
+
+	document.body.addEventListener("keydown", tbe.keyEvent, false);
+
+	// Attach these interactions properties based on the class property of the DOM elements
+	tbe.configInteractions = function configInteractions() {
+		var thisTbe = tbe;
+
+		// Most edit transaction start from code dispatched from this code.
+		// Know it well and edit with caution. There are subtle interaction states
+		// managed in these event handlers.
+		interact('.drag-delete').on('down', function () {
+			var block = thisTbe.elementToBlock(event.target);
+			if (block === null) return;
+			thisTbe.clearStates();
+			thisTbe.deleteChunk(block, block.last);
+		});
+
+		// Pointer events to the background go here. Might make sure the event is not
+		// right next to a block, e.g. allow some safe zones.
+		interact('.editor-background').on('down', function (event) {
+			try {
+				thisTbe.clearStates();
+				teakselection.startSelectionBoxDrag(event);
+			} catch (error) {
+				log.trace('exception in drag selection');
+			}
+		});
+
+		// Event directed to function blocks (SVG objects with class 'drag-group')
+		// These come in two main types: pointer events(mouse, track, and touch) and
+		// drag events. Drag events start manually, if the semantics of the pointer
+		// event indicate that makes sense. Note that the object at the root of the
+		// drag event may differ from the object the pointer event came to.
+		// For example, dragging may use the head of a flow block, not the tail that was
+		// clicked on or that chain dragged might be a copy of the block clicked on.
+		//
+		// After making change test on FF, Safari, Chrome, desktop and tablet. Most
+		// browser breaking behaviour differences have been in this code.
+
+		interact('.drag-group')
+		// Pointer events.
+		.on('down', function (event) {
+			tbe.pointerDownObject = event.target;
+		}).on('tap', function (event) {
+			var block = thisTbe.elementToBlock(event.target);
+			if (block !== null && block.isPaletteBlock) {
+				// Tapping on an palette item will place it on the sheet.
+				tbe.autoPlace(block);
+			} else {
+				// Tapping on diagram block brings up a config page.
+				actionDots.reset();
+				thisTbe.components.blockSettings.tap(block);
+			}
+		}).on('up', function (event) {
+			var block = thisTbe.elementToBlock(event.target);
+			if (block.rect.top > tbe.height - 100 && !block.isPaletteBlock) {
+				event.interaction.stop();
+				block.setDraggingState(false);
+				if (block.isLoopHead()) {
+					block.next.markSelected(true);
+					block.markSelected(true);
+					tbe.deleteChunk(block, block.last);
+				} else if (block.isLoopTail()) {
+					tbe.deleteChunk(block.flowHead, block.last);
+				} else {
+					tbe.deleteChunk(block, block.last);
+				}
+			}
+		}).on('move', function (event) {
+			try {
+				var interaction = event.interaction;
+				var block = thisTbe.elementToBlock(event.target);
+				if (block.name === 'tail') {
+					block = block.flowHead;
+				}
+				// If the pointer was moved while being held down
+				// and an interaction hasn't started yet...
+				if (interaction.pointerIsDown && !interaction.interacting()) {
+					if (tbe.pointerDownObject === event.target) {
+						block = tbe.findChunkStart(block);
+						var targetToDrag = block.svgGroup;
+						var notIsolated = block.next !== null && block.prev !== null;
+						var next = block;
+						var prev = block;
+						if (block.nesting > 0 && notIsolated && !block.isGroupSelected()) {
+							next = block.next;
+							prev = block.prev;
+							block.next.prev = prev;
+							block.prev.next = next;
+							block.next = null;
+							block.prev = null;
+							if (next !== null) {
+								tbe.animateMove(next, next.last, -block.width, 0, 10);
+							}
+						} else if (block.nesting > 0 && notIsolated && block.isGroupSelected()) {
+							next = block;
+							prev = block.prev;
+							while (next.next !== null && next.next.isSelected()) {
+								next = next.next;
+							}
+							var nextCopy = next.next;
+							next.next.prev = prev;
+							prev.next = next.next;
+							next.next = null;
+							block.prev = null;
+							if (next !== null) {
+								tbe.animateMove(nextCopy, nextCopy.last, -block.chainWidth, 0, 10);
+							}
+						}
+
+						// If coming from palette, or if coming from shift drag...
+						if (block.isPaletteBlock || event.shiftKey) {
+							var offsetX = 0;
+							var offsetY = 0;
+							if (block.isPaletteBlock) {
+								var pageRect = event.target.getBoundingClientRect();
+								offsetX = pageRect.x - block.left;
+								offsetY = pageRect.y - block.top;
+							}
+							block = thisTbe.replicateChunk(block, null, offsetX, offsetY);
+							targetToDrag = block.svgGroup;
+						}
+
+						// Start a drag interaction targeting the clone.
+						block.setDraggingState(true);
+
+						tbe.clearStates();
+						interaction.start({ name: 'drag' }, event.interactable, targetToDrag);
+					}
+				} else {
+					tbe.pointerDownObject = null;
+				}
+			} catch (error) {
+				log.trace('Exception in move event', error);
+			}
+		}).draggable({
+			manualStart: true, // Drag wont start until initiated by code.
+			restrict: {
+				restriction: thisTbe.svg,
+				endOnly: true,
+				// Restrictions, by default, are for the point not the whole object
+				// so R and B are 1.x to include the width and height of the object.
+				// 'Coordinates' are percent of width and height.
+				elementRect: { left: -0.2, top: -0.2, right: 1.2, bottom: 2.4 }
+				// TODO bottom needs to exclude the palette.
+			},
+			inertia: {
+				resistance: 20,
+				minSpeed: 50,
+				endSpeed: 1
+			},
+			max: Infinity,
+			onstart: function onstart() {},
+			onend: function onend(event) {
+				var block = thisTbe.elementToBlock(event.target);
+				if (block === null) return;
+
+				if (block.dragging) {
+					// If snap happens in coastin-move
+					// the chain will no longer be dragging.
+					block.moveToPossibleTarget();
+					block.setDraggingState(false);
+				}
+
+				tbe.moveToFront(block, tbe.dropAreaGroup);
+			},
+			onmove: function onmove(event) {
+				// Since there is inertia these callbacks continue to
+				// happen after the user lets go.
+
+				var block = thisTbe.elementToBlock(event.target);
+				if (block === null) return;
+				if (!block.dragging) {
+					// If snap happens in coasting-move
+					// the chain will no longer be dragging.
+					return;
+				}
+
+				// Puts the blocks being dragged at the top
+				tbe.moveToFront(block, tbe.svgCeiling);
+
+				// Move the chain to the new location based on deltas.
+				block.dmove(event.dx, event.dy, true);
+
+				// Then see if there is a possible target, a place to snap to.
+				var target = block.hilitePossibleTarget();
+
+				// If there is a target and its in the coasting phase then redirect
+				// the coasting to the target.
+				if (target !== null) {
+					var iStatus = event.interaction.inertiaStatus;
+					if (iStatus !== undefined && iStatus !== null && iStatus.active) {
+						// Its in the coasting state, just move it to the snapping place.
+						block.moveToPossibleTarget();
+						block.setDraggingState(false);
+					}
+				}
+			}
+		});
+	};
+
+	tbe.moveToFront = function (blockChain, ceiling) {
+		var temp = blockChain;
+		while (temp !== null) {
+			//  tbe.svg.append(temp.svgGroup);
+			tbe.svg.insertBefore(temp.svgGroup, ceiling);
+			temp = temp.next;
+		}
+	};
+
+	tbe.blocksOnScreen = function () {
+		var toReturn = false;
+		tbe.forEachDiagramBlock(function (block) {
+			if (block.isOnScreen()) {
+				toReturn = true;
+			}
+		});
+		if (Object.keys(tbe.diagramBlocks).length === 0) {
+			return false;
+		}
+		return toReturn;
+	};
+
+	tbe.sizePaletteToWindow = function sizePaletteToWindow() {
+		var w = tbe.width;
+		var h = tbe.height;
+
+		svgb.resizeRect(tbe.background, w, h);
+		tbe.windowRect = { left: 0, top: 0, right: w, bottom: h };
+
+		var scale = 1.0;
+		if (h < 250) {
+			scale = 250 / 500;
+		} else if (h < 500) {
+			scale = h / 500;
+		}
+
+		//var top = h - 90;
+		var paletteHeight = h - 100 * scale;
+		svgb.translateXY(tbe.dropAreaGroup, 0, paletteHeight);
+		for (var i = 0; i < tbe.dropAreaGroup.childNodes.length; i++) {
+			var tab = tbe.dropAreaGroup.childNodes[i];
+			var r = tab.childNodes[0];
+			svgb.resizeRect(r, w / scale, 100);
+			var scalestr = 'scale(' + scale + ')';
+			tab.setAttribute('transform', scalestr);
+		}
+	};
+
+	tbe.createTabSwitcherButton = function () {
+		var group = svgb.createGroup('tabSwitcher', 0, 0);
+		var circle = svgb.createCircle('tabSwitcherRing', 50, 50, 40, 0);
+		group.appendChild(circle);
+		return group;
+	};
+
+	tbe.buildTabs = function () {
+		var dropAreaGroup = svgb.createGroup('dropAreaGroup', 0, 0);
+		var names = ['Start', 'Action', 'Control'];
+		for (var i = 0; i < 3; i++) {
+			var group = svgb.createGroup('', 0, 0);
+			var className = 'area' + String(i + 1);
+			var rect = svgb.createRect('dropArea ' + className, 0, 0, tbe.width, 100, 0);
+			var tab = svgb.createRect('dropArea ' + className, 10 + 160 * i, -30, 150, 40, 5);
+			var text = svgb.createText('dropArea svg-clear', 20 + 160 * i, -10, names[i]);
+			group.appendChild(rect);
+			group.appendChild(tab);
+			group.appendChild(text);
+			dropAreaGroup.appendChild(group);
+		}
+
+		interact('.dropArea').on('down', function (event) {
+			var group = event.target.parentNode.getAttribute('group');
+			tbe.switchTabs(group);
+		});
+
+		this.svg.insertBefore(dropAreaGroup, tbe.svgCeiling);
+		this.dropAreaGroup = dropAreaGroup;
+
+		tbe.tabGroups = [];
+		tbe.tabGroups['start'] = tbe.dropAreaGroup.childNodes[0];
+		tbe.tabGroups['fx'] = tbe.dropAreaGroup.childNodes[1];
+		tbe.tabGroups['control'] = tbe.dropAreaGroup.childNodes[2];
+
+		// For event routing.
+		tbe.tabGroups['start'].setAttribute('group', 'start');
+		tbe.tabGroups['fx'].setAttribute('group', 'fx');
+		tbe.tabGroups['control'].setAttribute('group', 'control');
+	};
+
+	tbe.switchTabs = function (group) {
+		// This moves the tab background to the front.
+		this.clearStates();
+		var tab = tbe.tabGroups[group];
+		this.dropArea = tab;
+		tbe.dropAreaGroup.appendChild(tab);
+		tbe.showTabGroup(group);
+	};
+
+	tbe.showTabGroup = function (group) {
+		tbe.forEachPalette(function (block) {
+			if (block.pgroup === group) {
+				block.svgGroup.setAttribute('class', 'drag-group');
+			} else {
+				block.svgGroup.setAttribute('class', 'hiddenPaletteBlock');
+			}
+		});
+	};
+
+	tbe.resize = function () {
+		// This is the logical size (used by SVG, etc) not retina pixels.
+		tbe.width = window.innerWidth;
+		tbe.height = window.innerHeight;
+		// First resize palette and background then resize the action buttons
+		tbe.sizePaletteToWindow();
+		actionDots.resize(tbe.width, tbe.height);
+	};
+
+	tbe.addPalette = function (palette) {
+		var leftIndent = 30;
+		var indent = leftIndent;
+		var increment = 30;
+		var lastGroup = 'start';
+
+		tbe.buildTabs();
+
+		var blocks = palette.blocks;
+		var blockTop = 10; //tbe.height - 90;
+		for (var index = 0; index < blocks.length; index++) {
+			var name = blocks[index].name;
+			var pgroup = blocks[index].group;
+			if (pgroup !== lastGroup) {
+				indent = leftIndent;
+				increment = 15;
+				lastGroup = pgroup;
+			}
+			var block = this.addPaletteBlock(indent, blockTop, name, pgroup);
+
+			if (name === 'loop') {
+				// The loop is two blocks, needs a little special work here.
+				var blockTail = this.addPaletteBlock(block.right, blockTop, 'tail', 'control');
+				block.next = blockTail;
+				blockTail.prev = block;
+				// A flow block set has direct pointers between the two end points.
+				block.flowTail = blockTail;
+				blockTail.flowHead = block;
+				blockTail.fixupChainCrossBlockSvg();
+			}
+			indent += block.chainWidth + increment;
+		}
+
+		tbe.switchTabs('start');
+		// dropAreaGroup.appendChild(tbe.createTabSwitcherButton());
+	};
+
+	return tbe;
 }();
 
 },{"./appMain.js":13,"./conductor.js":33,"./fblock-settings.js":36,"./overlays/actionDots.js":38,"./teakselection":47,"./teaktext.js":48,"./trashBlocks.js":49,"assert":58,"icons.js":52,"interact.js":8,"log.js":53,"svgbuilder.js":55}],47:[function(require,module,exports){
@@ -15276,7 +15329,7 @@ module.exports = function factory() {
     temp: '\uF2C9',
     loop: '\uF2EA',
     data: '\uF080',
-    calibrate: '\uF24E',
+    calibrate: '\uF24E', //f013 - settings // f24e - scale //f140 - target
     batteryFull: '\uF240',
     batteryThreeQuarters: '\uF241',
     batteryHalf: '\uF242',
